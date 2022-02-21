@@ -219,3 +219,8 @@ int kbus_write(struct mosquitto *mosq, struct node controller, int modulePositio
 		build_event_object(mosq, controller, modulePosition, channelPosition, channelValue);
 	}
 }
+
+void kbus_read_dig()
+{
+	printf("did someting");
+}
