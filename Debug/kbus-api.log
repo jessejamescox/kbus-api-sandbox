@@ -1,0 +1,269 @@
+﻿  SSH: Connecting...
+  SSH: Handshaking...
+  SSH: Checking key...
+  SSH: Authenticating...
+  note : C:\Users\JC\source\repos\kbus-api-sandbox => /tmp/VisualGDB/c/Users/JC/source/repos/kbus-api-sandbox: 24 files copied (131KB).
+  note : Run "make  CONFIG=Debug" in directory "/tmp/VisualGDB/c/Users/JC/source/repos/kbus-api-sandbox" on wago@192.168.27.136 (SSH)
+  make  CONFIG=Debug
+  mkdir Debug
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c get_config.c -o Debug/get_config.o -MD -MF Debug/get_config.dep
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(0): note : In function 'get_program_config'
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(50,43): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+     50 |  if (!config_lookup_string(cf, "node_id", &config_hold.node_id)) {
+        |                                           ^~~~~~~~~~~~~~~~~~~~
+        |                                           |
+        |                                           char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(53,3): warning : implicit declaration of function ‘gethostname’
+     53 |   gethostname(hn, 32);
+        |   ^~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(54,3): warning : implicit declaration of function ‘asprintf’; did you mean ‘vsprintf’?
+     54 |   asprintf(&config_hold.node_id, "%s", hn);
+        |   ^~~~~~~~
+        |   vsprintf
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(58,48): warning : passing argument 3 of ‘config_lookup_bool’ from incompatible pointer type
+     58 |  if (!config_lookup_bool(cf, "publish_cyclic", &config_hold.publish_cyclic)) {
+        |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                |
+        |                                                _Bool *
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(314,68): note : expected ‘int *’ but argument is of type ‘_Bool *’
+    314 |                                             const char *path, int *value);
+        |                                                               ~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(68,49): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+     68 |  if (!config_lookup_string(cf, "mqtt_endpoint", &config_hold.mqtt_endpoint)) {
+        |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                 |
+        |                                                 char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(78,52): warning : passing argument 3 of ‘config_lookup_bool’ from incompatible pointer type
+     78 |  if (!config_lookup_bool(cf, "support_userpasswd", &config_hold.support_userpasswd)) {
+        |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                    |
+        |                                                    _Bool *
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(314,68): note : expected ‘int *’ but argument is of type ‘_Bool *’
+    314 |                                             const char *path, int *value);
+        |                                                               ~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(85,50): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+     85 |   if (!config_lookup_string(cf, "mqtt_username", &config_hold.mqtt_username))
+        |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                  |
+        |                                                  char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(90,50): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+     90 |   if (!config_lookup_string(cf, "mqtt_password", &config_hold.mqtt_password))
+        |                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                  |
+        |                                                  char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(97,45): warning : passing argument 3 of ‘config_lookup_bool’ from incompatible pointer type
+     97 |  if (!config_lookup_bool(cf, "support_tls", &config_hold.support_tls)) {
+        |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+        |                                             |
+        |                                             _Bool *
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(314,68): note : expected ‘int *’ but argument is of type ‘_Bool *’
+    314 |                                             const char *path, int *value);
+        |                                                               ~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(104,46): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+    104 |   if (!config_lookup_string(cf, "cert_path", &config_hold.cert_path))
+        |                                              ^~~~~~~~~~~~~~~~~~~~~~
+        |                                              |
+        |                                              char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(109,45): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+    109 |   if (!config_lookup_string(cf, "key_path", &config_hold.key_path))
+        |                                             ^~~~~~~~~~~~~~~~~~~~~
+        |                                             |
+        |                                             char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(114,48): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+    114 |   if (!config_lookup_string(cf, "rootca_path", &config_hold.rootca_path))
+        |                                                ^~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                |
+        |                                                char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(119,53): warning : passing argument 3 of ‘config_lookup_bool’ from incompatible pointer type
+    119 |   if (!config_lookup_bool(cf, "support_aws_shadow", &config_hold.support_aws_shadow))
+        |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                     |
+        |                                                     _Bool *
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(314,68): note : expected ‘int *’ but argument is of type ‘_Bool *’
+    314 |                                             const char *path, int *value);
+        |                                                               ~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(141,52): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+    141 |   if (!config_lookup_string(cf, "event_sub_topic", &config_hold.event_sub_topic)) {
+        |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                    |
+        |                                                    char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(146,52): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+    146 |   if (!config_lookup_string(cf, "event_pub_topic", &config_hold.event_pub_topic)) {
+        |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                    |
+        |                                                    char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(151,53): warning : passing argument 3 of ‘config_lookup_string’ from incompatible pointer type
+    151 |   if (!config_lookup_string(cf, "status_pub_topic", &config_hold.status_pub_topic)) {
+        |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                     |
+        |                                                     char **
+  C:\Users\JC\source\repos\kbus-api-sandbox\get_config.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\libconfig.h(317,60): note : expected ‘const char **’ but argument is of type ‘char **’
+    317 |                                               const char **value);
+        |                                               ~~~~~~~~~~~~~^~~~~
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c json.c -o Debug/json.o -MD -MF Debug/json.dep
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.h(5): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\json.c(21): note : included from here
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus.h(30,1): warning : useless storage class specifier in empty declaration
+     30 | };
+        | ^
+  C:\Users\JC\source\repos\kbus-api-sandbox\json.c(0): note : In function 'build_error_object'
+C:\Users\JC\source\repos\kbus-api-sandbox\json.c(38,24): warning : initialization discards ‘const’ qualifier from pointer target type
+     38 |  char *return_string = json_object_to_json_string(json_error_object);
+        |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  C:\Users\JC\source\repos\kbus-api-sandbox\json.c(0): note : In function 'build_controller_object'
+C:\Users\JC\source\repos\kbus-api-sandbox\json.c(67,3): warning : implicit declaration of function ‘asprintf’; did you mean ‘vsprintf’?
+     67 |   asprintf(&mod, "module%i", (iModules + 1));
+        |   ^~~~~~~~
+        |   vsprintf
+C:\Users\JC\source\repos\kbus-api-sandbox\json.c(132,87): warning : passing argument 1 of ‘json_object_new_int’ makes integer from pointer without a cast
+    132 |  json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state));
+        |                                                                             ~~~~~~~~~~^~~~~~~~~~~~~
+        |                                                                                       |
+        |                                                                                       char *
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\linkhash.h(16): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json.h(22): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\json.c(20): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json_object.h(473,28): note : expected ‘int32_t’ {aka ‘int’} but argument is of type ‘char *’
+    473 | extern struct json_object* json_object_new_int(int32_t i);
+        |                            ^~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\json.c(151,28): warning : initialization discards ‘const’ qualifier from pointer target type
+    151 |  char *controller_string = json_object_to_json_string(jsonMain);
+        |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  C:\Users\JC\source\repos\kbus-api-sandbox\json.c(0): note : In function 'build_event_object'
+C:\Users\JC\source\repos\kbus-api-sandbox\json.c(216,87): warning : passing argument 1 of ‘json_object_new_int’ makes integer from pointer without a cast
+    216 |  json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)); // faulting here?? changed this to int
+        |                                                                             ~~~~~~~~~~^~~~~~~~~~~~~
+        |                                                                                       |
+        |                                                                                       char *
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\linkhash.h(16): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json.h(22): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\json.c(20): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json_object.h(473,28): note : expected ‘int32_t’ {aka ‘int’} but argument is of type ‘char *’
+    473 | extern struct json_object* json_object_new_int(int32_t i);
+        |                            ^~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\json.c(228,23): warning : initialization discards ‘const’ qualifier from pointer target type
+    228 |  char *event_string = json_object_to_json_string(jsonMain);
+        |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c kbus-api.c -o Debug/kbus-api.o -MD -MF Debug/kbus-api.dep
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.h(5): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.c(35): note : included from here
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus.h(30,1): warning : useless storage class specifier in empty declaration
+     30 | };
+        | ^
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.c(0): note : In function 'selector_switch'
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.c(53,17): warning : implicit declaration of function ‘get_switch_state’; did you mean ‘map_switch_state’?
+     53 |  switch_state = get_switch_state();
+        |                 ^~~~~~~~~~~~~~~~
+        |                 map_switch_state
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.c(0): note : In function 'main'
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.c(160,92): warning : passing argument 4 of ‘build_module_object’ from incompatible pointer type
+    160 |      if (build_module_object(kbus.terminalCount, kbus.terminalDescription, kbus.terminals, &controller.modules))
+        |                                                                                            ^~~~~~~~~~~~~~~~~~~
+        |                                                                                            |
+        |                                                                                            struct module (*)[255]
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus.h(11): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.h(5): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.c(35): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\node.h(28,189): note : expected ‘struct module *’ but argument is of type ‘struct module (*)[255]’
+     28 | extern int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalDescription[LDKC_KBUS_TERMINAL_COUNT_MAX], u16 terminals[LDKC_KBUS_TERMINAL_COUNT_MAX], struct module modules[LDKC_KBUS_TERMINAL_COUNT_MAX]);
+        |                                                                                                                                                                               ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c kbus.c -o Debug/kbus.o -MD -MF Debug/kbus.dep
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(20): note : included from here
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus.h(30,1): warning : useless storage class specifier in empty declaration
+     30 | };
+        | ^
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(0): note : In function 'kbus_init'
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(56,7): warning : implicit declaration of function ‘strcmp’
+     56 |   if (strcmp(kbus->deviceList[i].DeviceName, "libpackbus") == 0) {
+        |       ^~~~~~
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(0): note : In function 'kbus_read'
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(174,67): warning : passing argument 5 of ‘adi->ReadBytes’ from incompatible pointer type
+    174 |     adi->ReadBytes(kbus.kbusDeviceId, kbus.taskId, byteOffset, 2, (uint16_t *) &controller.modules[i_modules].channelData[i_channels]);
+        |                                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                                   |
+        |                                                                   uint16_t * {aka short unsigned int *}
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(174,67): note : expected ‘uint8_t *’ {aka ‘unsigned char *’} but argument is of type ‘uint16_t *’ {aka ‘short unsigned int *’}
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(0): note : In function 'kbus_write_analog'
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(197,132): warning : passing argument 5 of ‘adi->WriteBytes’ from incompatible pointer type
+    197 |  adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, (kbus.terminalDescription[modulePosition].OffsetInput_bits + channelPosition), 2, (uint16_t *)  &channelValue);
+        |                                                                                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+        |                                                                                                                                    |
+        |                                                                                                                                    uint16_t * {aka short unsigned int *}
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus.c(197,132): note : expected ‘uint8_t *’ {aka ‘unsigned char *’} but argument is of type ‘uint16_t *’ {aka ‘short unsigned int *’}
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c led.c -o Debug/led.o -MD -MF Debug/led.dep
+  C:\Users\JC\source\repos\kbus-api-sandbox\led.c(0): note : In function 'set_led'
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(23,3): warning : implicit declaration of function ‘system’
+     23 |   system("echo 255 > /sys/class/leds/pca955x\:run-green/brightness");
+        |   ^~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(23,10): warning : unknown escape sequence: '\:'
+     23 |   system("echo 255 > /sys/class/leds/pca955x\:run-green/brightness");
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(24,10): warning : unknown escape sequence: '\:'
+     24 |   system("echo 0 > /sys/class/leds/pca955x\:run-red/brightness");
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(28,10): warning : unknown escape sequence: '\:'
+     28 |   system("echo 255 > /sys/class/leds/pca955x\:run-red/brightness");
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(31,10): warning : unknown escape sequence: '\:'
+     31 |   system("echo 0 > /sys/class/leds/pca955x\:run-green/brightness");
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(32,10): warning : unknown escape sequence: '\:'
+     32 |   system("echo 255 > /sys/class/leds/pca955x\:run-red/brightness");
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(35,10): warning : unknown escape sequence: '\:'
+     35 |   system("echo 0 > /sys/class/leds/pca955x\:run-green/brightness");
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\JC\source\repos\kbus-api-sandbox\led.c(36,10): warning : unknown escape sequence: '\:'
+     36 |   system("echo 0 > /sys/class/leds/pca955x\:run-red/brightness");
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c logger.c -o Debug/logger.o -MD -MF Debug/logger.dep
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c mqtt.c -o Debug/mqtt.o -MD -MF Debug/mqtt.dep
+  C:\Users\JC\source\repos\kbus-api-sandbox\kbus-api.h(5): note : included from here
+  C:\Users\JC\source\repos\kbus-api-sandbox\mqtt.c(22): note : included from here
+C:\Users\JC\source\repos\kbus-api-sandbox\kbus.h(30,1): warning : useless storage class specifier in empty declaration
+     30 | };
+        | ^
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c node.c -o Debug/node.o -MD -MF Debug/node.dep
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c switch.c -o Debug/switch.o -MD -MF Debug/switch.dep
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-g++ -o Debug/kbus-api -Wl,-gc-sections   -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/lib -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/lib -Wl,--start-group Debug/get_config.o Debug/json.o Debug/kbus-api.o Debug/kbus.o Debug/led.o Debug/logger.o Debug/mqtt.o Debug/node.o Debug/switch.o -ldal -lglib-2.0 -lffi -lpthread -lrt -llibloader -loslinux -ldl -lncurses -lpcre -lconfig -lgmodule-2.0 -lz -lgio-2.0 -ldbus-glib-1 -lwago_dbus -ldbus-1 -lgobject-2.0 -ldbuskbuscommon -lcrypto -lssl -lmosquitto -loms -ljson-c -ldiagnostic  -Wl,--rpath='$ORIGIN'   -Wl,--end-group
