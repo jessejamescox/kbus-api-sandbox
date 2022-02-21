@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kbus-api", "kbus-api.vcxproj", "{0BFE3D4D-5F10-4A03-948C-F5195A33746D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BFE3D4D-5F10-4A03-948C-F5195A33746D}.Debug|x86.ActiveCfg = Debug|Win32
+		{0BFE3D4D-5F10-4A03-948C-F5195A33746D}.Debug|x86.Build.0 = Debug|Win32
+		{0BFE3D4D-5F10-4A03-948C-F5195A33746D}.Release|x86.ActiveCfg = Release|Win32
+		{0BFE3D4D-5F10-4A03-948C-F5195A33746D}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0E71B9E-4B40-4056-B560-B29A8BF03038}
+	EndGlobalSection
+EndGlobal
