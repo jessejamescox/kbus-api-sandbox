@@ -192,13 +192,13 @@ int kbus_read(struct mosquitto *mosq, struct prog_config this_config, struct kbu
 				adi->ReadBytes(kbus.kbusDeviceId, kbus.taskId, byteOffset, 2, (uint16_t *) &controller.modules[i_modules].channel[i_channels].value);
 				adi->ReadEnd(kbus.kbusDeviceId, kbus.taskId); // unlock PD-In data
 			}
-			if (controller.modules[i_modules].channel[i_channels].value != controllerLast.modules[i_modules].channel[i_channels].value) {
-				if (!initState) 
-				{
-					build_event_object(mosq, controller, i_modules, i_channels, controller.modules[i_modules].channel[i_channels].value);
-				}
-				controllerLast.modules[i_modules].channel[i_channels].value = controller.modules[i_modules].channel[i_channels].value;
-			}
+//			if (controller.modules[i_modules].channel[i_channels].value != controllerLast.modules[i_modules].channel[i_channels].value) {
+//				if (!initState) 
+//				{
+//					build_event_object(mosq, controller, i_modules, i_channels, controller.modules[i_modules].channel[i_channels].value);
+//				}
+//				controllerLast.modules[i_modules].channel[i_channels].value = controller.modules[i_modules].channel[i_channels].value;
+//			}
 		} // for channels
 	} // for modules
 	initState = false;

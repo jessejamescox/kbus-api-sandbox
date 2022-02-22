@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
 	uint8_t reconnect = true;
 	struct mosquitto *mosq;
 	int rc = 0;
+	
+	int kbus_resp = 0;
 
 	// get the config
 	this_config = get_program_config();
@@ -82,6 +84,10 @@ int main(int argc, char *argv[])
 		case 0:
 			if (initialized)
 			{
+				// send one last object to notify the system that it is stopped
+				build_controller_object(mosq, controller);
+				
+				// set the led to stop
 				set_led(IS_STOPPED);
 
 				printf("program stopped\n");
@@ -104,8 +110,6 @@ int main(int argc, char *argv[])
 
 			if (initialized == 1)
 			{
-				selector_switch();
-				controller.switch_state = map_switch_state(switch_state);
 				
 				rc = mosquitto_loop(mosq, -1, 1);
 				if (run && rc)
@@ -125,19 +129,17 @@ int main(int argc, char *argv[])
 				else
 				{
 					iCounts++;
-					//printf("iCounts: %i\n", iCounts);
 				}
 				
 				// do the kbus work
-				int kbus_resp = kbus_read(mosq, this_config, kbus);//, controller);
+				kbus_resp = kbus_read(mosq, this_config, kbus);//, controller);
 				
 				// send some error stuff if needed
-				if (kbus_resp != 0) {
+				if (kbus_resp != 0) 
+				{
 					char *kbus_error_string = build_error_object(true, controller, this_config, "kbus error present");
 					mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(kbus_error_string), kbus_error_string, 0, 0);
 				}
-				
-
 			}
 			else
 			{
@@ -180,7 +182,7 @@ int main(int argc, char *argv[])
 						controller.number_of_modules = kbus.terminalCount;
 					}
 				}
-				int kbusJsonObject = build_controller_object(mosq, controller);
+				build_controller_object(mosq, controller);
 				initialized = 1;
 				set_led(IS_RUNNING);
 

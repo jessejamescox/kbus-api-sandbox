@@ -23,7 +23,7 @@ extern char *build_error_object(bool error, struct node controller, struct prog_
 
 extern struct channel_command parse_command_message(char *message); //, int *module_position, int * channel_position, int *channel_value);
 
-extern int build_controller_object(struct mosquitto *mosq, struct node controller);
+extern void build_controller_object(struct mosquitto *mosq, struct node controller);
 
 extern void build_event_object(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue);
 

@@ -71,7 +71,7 @@ void simple_channels_object(struct json_object *jobj, struct module module)
 		}
 		
 		// free the holding char
-		json_object_put(tmp);
+		while (json_object_put(tmp)) {};
 		free(chn);
 	}
 };
@@ -91,7 +91,7 @@ void simple_module_object(struct json_object *jobj , struct module module)
 	simple_channels_object(tmp, module);
 	json_object_object_add(jobj, "channels", json_object_get(tmp));
 	
-	json_object_put(tmp);
+	while (json_object_put(tmp)) {};
 }
 
 void simple_modules_object(struct json_object *jobj, struct node controller)
@@ -112,7 +112,7 @@ void simple_modules_object(struct json_object *jobj, struct node controller)
 		json_object_object_add(jobj, mod, json_object_get(tmp));
 		
 		// free the holding char
-		json_object_put(tmp);
+		while (json_object_put(tmp)) {};
 		free(mod);
 	}
 }
@@ -130,7 +130,7 @@ void main_controller_object(struct json_object *jobj, struct node controller)
 	simple_modules_object(tmp, controller);
 	json_object_object_add(jobj, "modules", json_object_get(tmp));
 	
-	json_object_put(tmp);
+	while (json_object_put(tmp)) {};
 	
 }
 
@@ -143,11 +143,11 @@ void main_message_object(struct json_object *jobj, struct node controller)
 	main_controller_object(tmp, controller);
 	json_object_object_add(jobj, "controller", json_object_get(tmp));
 	
-	json_object_put(tmp);
+	while (json_object_put(tmp)) {};
 
 }
 
-int build_controller_object(struct mosquitto *mosq, struct node controller) 
+void build_controller_object(struct mosquitto *mosq, struct node controller) 
 { 
 	struct json_object *tmp = json_object_new_object();
 	
@@ -157,7 +157,7 @@ int build_controller_object(struct mosquitto *mosq, struct node controller)
 	
 	mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
 	
-	json_object_put(tmp);
+	while (json_object_put(tmp)) {};
 }
 
 /*
