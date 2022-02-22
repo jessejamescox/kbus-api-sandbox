@@ -95,5 +95,8 @@
     <ClInclude Include="timer.h">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="module.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

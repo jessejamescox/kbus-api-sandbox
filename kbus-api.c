@@ -70,6 +70,8 @@ int main(int argc, char *argv[])
 	{
 		// get the run stop reset switch value
 		selector_switch();
+		
+		controller.switch_state = map_switch_state(switch_state);
 
 		// run based on selector switch
 		switch (switch_state)
@@ -101,6 +103,8 @@ int main(int argc, char *argv[])
 			if (initialized == 1)
 			{
 				selector_switch();
+				controller.switch_state = map_switch_state(switch_state);
+				
 				rc = mosquitto_loop(mosq, -1, 1);
 				if (run && rc)
 				{

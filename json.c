@@ -29,16 +29,135 @@
 
 struct prog_config this_config;
 
-char *build_error_object(bool error, struct node controller, struct prog_config this_config, char *error_msg) {
-	struct json_object *json_error_object = json_object_new_object();
-	json_object_object_add(json_error_object, "node_id", json_object_new_string(this_config.node_id));
-	json_object_object_add(json_error_object, "switch_state", json_object_new_string(controller.switch_state));
-	json_object_object_add(json_error_object, "error", json_object_new_boolean(error));
-	json_object_object_add(json_error_object, "error_msg", json_object_new_string(error_msg));
-	char *return_string = json_object_to_json_string(json_error_object);
-	return return_string;
+// helper functions
+struct json_object *dig_channel_object(struct channel channel)
+{
+	struct json_object *tmp = json_object_new_object();
+	
+	json_object_object_add(tmp, "value", json_object_new_boolean(channel.value)); 
+	json_object_object_add(tmp, "label", json_object_new_string(channel.label)); 
+	printf("Channel label: %s\n", channel.label);
+	return tmp;
+};
+
+struct json_object *analog_channel_object(struct channel channel)
+{
+	struct json_object *tmp = json_object_new_object();
+	
+	json_object_object_add(tmp, "value", json_object_new_boolean(channel.value)); 
+	json_object_object_add(tmp, "deadband", json_object_new_int(channel.deadband));
+	json_object_object_add(tmp, "label", json_object_new_string(channel.label)); 
+	return tmp;
+};
+
+struct json_object *simple_channels_object(struct module module)
+{
+	struct json_object *tmp = json_object_new_object();
+	
+	// add the channels
+	for (int channelIndex = 0; channelIndex < module.channelCount; channelIndex++) 
+	{
+		// build the channel object key
+		char *chn = (char *) malloc(10);
+		asprintf(&chn, "channel%i", (channelIndex + 1));
+		
+		// check for digital
+		if ((!strcmp(module.type, "DI")) || (!strcmp(module.type, "DO")))
+		{
+			json_object_object_add(tmp, chn, dig_channel_object(module.channel[channelIndex]));
+		}
+		
+		// check for typical analog
+		if ((!strcmp(module.type, "AI")) || (!strcmp(module.type, "AO")))
+		{
+			json_object_object_add(tmp, chn, analog_channel_object(module.channel[channelIndex]));
+		}
+		
+		// free the holding char
+		free(chn);
+	}
+	return tmp;
+};
+
+struct json_object *simple_module_object(struct module module)
+{
+	struct json_object *tmp = json_object_new_object();
+	
+	// add the module info
+	json_object_object_add(tmp, "pn", json_object_new_int(module.pn));
+	json_object_object_add(tmp, "position", json_object_new_int(module.position));
+	json_object_object_add(tmp, "type", json_object_new_string(module.type));
+	json_object_object_add(tmp, "input_channel_count", json_object_new_int(module.inChannelCount));
+	json_object_object_add(tmp, "output_channel_count", json_object_new_int(module.outChannelCount));
+	
+	// add the channel info
+	json_object_object_add(tmp, "channels", simple_channels_object(module));
+	
+	return tmp ;
 }
 
+struct json_object *simple_modules_object(struct node controller)
+{
+	struct json_object *tmp = json_object_new_object();
+	
+	// add the channels
+	for(int moduleIndex = 0 ; moduleIndex < controller.number_of_modules ; moduleIndex++) 
+{
+	// build the channel object key
+	char *mod = (char *) malloc(10);
+	asprintf(&mod, "module%i", (moduleIndex + 1)) ;
+		
+	// build the objects in a loop
+	json_object_object_add(tmp, mod, simple_module_object(controller.modules[moduleIndex])) ;
+		
+	// free the holding char
+	free(mod) ;
+}
+return tmp ;
+}
+
+struct json_object *main_controller_object(struct node controller)
+{
+	struct json_object *tmp = json_object_new_object();
+	
+	// add the module info
+	json_object_object_add(tmp, "node_id", json_object_new_string(controller.nodeId)) ;
+	json_object_object_add(tmp, "switch_state", json_object_new_string(controller.switch_state));
+	json_object_object_add(tmp, "module_count", json_object_new_int(controller.number_of_modules)) ;
+	
+	// add the channel info
+	json_object_object_add(tmp, "modules", simple_modules_object(controller)) ;
+	
+	//char *tempString = json_object_to_json_string_ext(tmp, JSON_C_TO_STRING_PRETTY);
+	//printf("%s\nis %i bytes\n", tempString, strlen(tempString));
+	
+	return tmp ;
+}
+
+char *main_message_object(struct node controller)
+{
+	
+	struct json_object *tmp = json_object_new_object();
+	
+	// no idea if this will work
+	//json_object_object_add(tmp, "state", tmp);
+	//json_object_object_add(tmp, "reported", tmp);
+	json_object_object_add(tmp, "controller", main_controller_object(controller));
+
+	return tmp;
+	//char *tempString = json_object_to_json_string_ext(tmp, JSON_C_TO_STRING_PRETTY);
+	//printf("%s\nis %i bytes\n", tempString, strlen(tempString));
+}
+
+int build_controller_object(struct mosquitto *mosq, struct node controller) 
+{ 
+	struct json_object *tmp = main_message_object(controller);
+	
+	char *jsonString = json_object_to_json_string_ext(tmp, JSON_C_TO_STRING_PRETTY);
+	printf("%s\n", jsonString);
+}
+
+/*
 int build_controller_object(struct mosquitto *mosq, struct node controller) {
 	
 	//index vars
@@ -165,6 +284,7 @@ int build_controller_object(struct mosquitto *mosq, struct node controller) {
 	
 	return 0;
 }
+*/
 
 void build_event_object(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue) {
 	
@@ -335,4 +455,13 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	//return error
 	return 0;
 }
-;
+
+char *build_error_object(bool error, struct node controller, struct prog_config this_config, char *error_msg) {
+	struct json_object *json_error_object = json_object_new_object();
+	json_object_object_add(json_error_object, "node_id", json_object_new_string(this_config.node_id));
+	json_object_object_add(json_error_object, "switch_state", json_object_new_string(controller.switch_state));
+	json_object_object_add(json_error_object, "error", json_object_new_boolean(error));
+	json_object_object_add(json_error_object, "error_msg", json_object_new_string(error_msg));
+	char *return_string = json_object_to_json_string(json_error_object);
+	return return_string;
+}
