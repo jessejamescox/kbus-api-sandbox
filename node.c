@@ -48,7 +48,7 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 			modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
 			log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
 			break;
-		case 34000 ... 37000:
+		case 34000 ... 37000:			
 			if ((CHECK_BIT(terminals[i], 0)) && (CHECK_BIT(terminals[i], 1))) {
 				modules[i].type = "DX";
 				modules[i].pn = terminals[i];
@@ -92,7 +92,7 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 			// build the channel label key
 			asprintf(&modules[i].channel[y].label, "m%ic%i", (i + 1), (y + 1));
 
-			printf("%s\n", modules[i].channel[y].label);
+			//printf("%s\n", modules[i].channel[y].label);
 
 		}
 	} 

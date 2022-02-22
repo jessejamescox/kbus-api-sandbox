@@ -48,6 +48,8 @@ int switch_state = 0;
 int initialized = 0;
 int kbusIsInit = 1;
 
+int iCounts = 0;
+
 void selector_switch()
 {
 	switch_state = get_switch_state();
@@ -115,6 +117,17 @@ int main(int argc, char *argv[])
 					mosquitto_reconnect(mosq);
 				}
 				
+				if (iCounts >= 50)
+				{
+					build_controller_object(mosq, controller);
+					iCounts = 0;
+				}
+				else
+				{
+					iCounts++;
+					//printf("iCounts: %i\n", iCounts);
+				}
+				
 				// do the kbus work
 				int kbus_resp = kbus_read(mosq, this_config, kbus);//, controller);
 				
@@ -123,6 +136,7 @@ int main(int argc, char *argv[])
 					char *kbus_error_string = build_error_object(true, controller, this_config, "kbus error present");
 					mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(kbus_error_string), kbus_error_string, 0, 0);
 				}
+				
 
 			}
 			else
