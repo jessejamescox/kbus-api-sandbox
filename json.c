@@ -51,11 +51,12 @@ void simple_channels_object(struct json_object *jobj, struct module module)
 	// add the channels
 	for (int channelIndex = 0; channelIndex < module.channelCount; channelIndex++) 
 	{
-		char chn[10];
+		char *chn;	//[10];
 		
 		struct json_object *tmp = json_object_new_object();
 		
 		// build the channel object key
+		chn = (char *) malloc(10 * sizeof(char));
 		asprintf(chn, "channel%i", (channelIndex + 1));
 		
 		// check for digital
@@ -75,7 +76,7 @@ void simple_channels_object(struct json_object *jobj, struct module module)
 		
 		// free the holding char
 		json_object_put(tmp);
-		//free(chn);
+		free(chn);
 	}
 };
 
@@ -104,12 +105,12 @@ void simple_modules_object(struct json_object *jobj, struct node controller)
 	// add the channels
 	for(int moduleIndex = 0 ; moduleIndex < controller.number_of_modules ; moduleIndex++) 
 	{
-		char mod[10];
+		char *mod; //[10];
 		
 		struct json_object *tmp = json_object_new_object();
 		
 		// build the channel object key
-		//mod = (char *) malloc(10 * sizeof(char));
+		mod = (char *) malloc(10 * sizeof(char));
 		asprintf(&mod, "module%i", (moduleIndex + 1)) ;
 		
 		simple_module_object(tmp, controller.modules[moduleIndex]);
@@ -119,7 +120,7 @@ void simple_modules_object(struct json_object *jobj, struct node controller)
 		
 		// free the holding char
 		json_object_put(tmp);
-		//free(mod);
+		free(mod);
 	}
 }
 
@@ -158,144 +159,32 @@ void build_controller_object(struct mosquitto *mosq, struct node controller)
 	
 	main_message_object(tmp, controller);
 
-	//char *jsonString = json_object_to_json_string(tmp);
+	char *jsonString = json_object_to_json_string(tmp);
 	
-	//mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
-	
+	mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
 
-
-	//json_object_put(tmp);
+	json_object_put(tmp);
 	json_object_put(tmp);
 }
 
-/*
-int build_controller_object(struct mosquitto *mosq, struct node controller) {
-	
-	//index vars
-	int iModules, iChannels;
-	
-	int myJsonLen = 0;
-	int myJsonPuts = 0;
-	
-	// main object creation
-	struct json_object	*jsonMain		= json_object_new_object();
-	struct json_object	*jsonState		= json_object_new_object();
-	struct json_object	*jsonReported	= json_object_new_object();
-	struct json_object	*jsonController	= json_object_new_object();
-	struct json_object	*jsonModules	= json_object_new_object();
-	//struct json_object	*jsonChannel	= json_object_new_object();
-	//struct json_object	*jsonModule		= json_object_new_object();
-	//struct json_object	*jsonChannels	= json_object_new_object();
-	
-	for (iModules = 0; iModules < controller.number_of_modules; iModules++) {
-		
-		struct json_object	*jsonModule		= json_object_new_object();
-		struct json_object	*jsonChannels	= json_object_new_object();
-		
-		// build the module object one-by-one
-		char *mod = (char *) malloc(10);
-		asprintf(&mod, "module%i", (iModules + 1));
-		
-		for (iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++) {
-			
-			struct json_object	*jsonChannel = json_object_new_object();
-			
-			if (!strcmp(controller.modules[iModules].type, "DI"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_boolean(controller.modules[iModules].channelData[iChannels]));
-			}
-			if (!strcmp(controller.modules[iModules].type, "DO"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_boolean(controller.modules[iModules].channelData[iChannels]));
-			}
-			if (!strcmp(controller.modules[iModules].type, "AI"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_int(controller.modules[iModules].channelData[iChannels]));
-			}
-			if (!strcmp(controller.modules[iModules].type, "AO"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_int(controller.modules[iModules].channelData[iChannels]));
-			}
-			
-			// build the modules channels one-by-one
-			char *chn = (char *) malloc(10);
-			asprintf(&chn, "channel%i", (iChannels + 1));
-			
-			// build the module object
-			json_object_object_add(jsonChannels, chn, json_object_get(jsonChannel));
-			
-			// ***** do I need to free this?? 
-			myJsonLen = json_object_object_length(jsonChannel);
-			while (json_object_put(jsonChannel) != 0) 
-			{
-				json_object_put(jsonChannel);
-			};
-			myJsonLen = json_object_object_length(jsonChannel);
-			free(chn);
-			
-		}
-		
-		json_object_object_add(jsonModule, "pn", json_object_new_int(controller.modules[iModules].pn));
-		json_object_object_add(jsonModule, "module_type", json_object_new_string(controller.modules[iModules].type));
-		json_object_object_add(jsonModule, "position", json_object_new_int(iModules + 1));
-		json_object_object_add(jsonModule, "channel_count", json_object_new_int(controller.modules[iModules].channelCount));
-		json_object_object_add(jsonModule, "channels", json_object_get(jsonChannels));
-		
-		myJsonLen = json_object_object_length(jsonChannels);
-		json_object_put(jsonChannels);
-		
-		// add this to the reported object
-		json_object_object_add(jsonModules, mod, json_object_get(jsonModule));
-		
-		myJsonLen = json_object_object_length(jsonModule);
-		while (json_object_put(jsonModule) != 0)
-		{
-			myJsonPuts = json_object_put(jsonModule);
-		}
-		myJsonLen = json_object_object_length(jsonModule);
-		free(mod);
-		
-	}
-	
-	// build the main json object	
-	json_object_object_add(jsonController, "node_id", json_object_new_string(controller.nodeId));
-	json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state));
-	json_object_object_add(jsonController, "module_count", json_object_new_int(controller.number_of_modules));
-	
-	// add this to the reported object
-	json_object_object_add(jsonController, "modules", json_object_get(jsonModules));
-	//json_object_put(jsonModules);
-	
-	// add this to the reported object
-	json_object_object_add(jsonReported, "controller", json_object_get(jsonController));
-	//json_object_put(jsonController);
-	
-	// add the module to the reported
-	json_object_object_add(jsonState, "reported", json_object_get(jsonReported));
-	//json_object_put(jsonReported);
-	
-	// add the reported to the state
-	json_object_object_add(jsonMain, "state", json_object_get(jsonState));
-	//json_object_put(jsonState);
-	
-	char *controller_string = json_object_to_json_string(jsonMain);
-	
-	
-	int pub_resp = mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(controller_string), controller_string, 0, 0);
-	
-	
-	//json_object_put(jsonChannel);
-	//json_object_put(jsonChannels);
-	//json_object_put(jsonModule);
-	json_object_put(jsonModules);
-	json_object_put(jsonController);
-	json_object_put(jsonReported);
-	json_object_put(jsonState);
-	json_object_put(jsonMain);
-	
-	return 0;
-}
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void build_event_object(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue) {
 	
