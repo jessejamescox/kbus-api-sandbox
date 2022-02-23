@@ -12,17 +12,13 @@ C:\Users\JC\Documents\GitHub\kbus-api-sandbox\kbus.h(30,1): warning : useless st
      30 | };
         | ^
   C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'simple_channels_object'
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(56,3): warning : implicit declaration of function ‘asprintf’; did you mean ‘vsprintf’?
-     56 |   asprintf(&chn, "channel%i", (channelIndex + 1));
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(59,3): warning : implicit declaration of function ‘asprintf’; did you mean ‘vsprintf’?
+     59 |   asprintf(chn, "channel%i", (channelIndex + 1));
         |   ^~~~~~~~
         |   vsprintf
-  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_controller_object'
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(156,21): warning : initialization discards ‘const’ qualifier from pointer target type
-    156 |  char *jsonString = json_object_to_json_string(tmp);
-        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
   C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_event_object'
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(340,87): warning : passing argument 1 of ‘json_object_new_int’ makes integer from pointer without a cast
-    340 |  json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)); // faulting here?? changed this to int
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(347,87): warning : passing argument 1 of ‘json_object_new_int’ makes integer from pointer without a cast
+    347 |  json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)); // faulting here?? changed this to int
         |                                                                             ~~~~~~~~~~^~~~~~~~~~~~~
         |                                                                                       |
         |                                                                                       char *
@@ -32,11 +28,11 @@ C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(340,87): warning : passing 
   C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json_object.h(473,28): note : expected ‘int32_t’ {aka ‘int’} but argument is of type ‘char *’
     473 | extern struct json_object* json_object_new_int(int32_t i);
         |                            ^~~~~~~~~~~~~~~~~~~
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(352,23): warning : initialization discards ‘const’ qualifier from pointer target type
-    352 |  char *event_string = json_object_to_json_string(jsonMain);
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(359,23): warning : initialization discards ‘const’ qualifier from pointer target type
+    359 |  char *event_string = json_object_to_json_string(jsonMain);
         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
   C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_error_object'
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(469,24): warning : initialization discards ‘const’ qualifier from pointer target type
-    469 |  char *return_string = json_object_to_json_string(json_error_object);
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(476,24): warning : initialization discards ‘const’ qualifier from pointer target type
+    476 |  char *return_string = json_object_to_json_string(json_error_object);
         |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
   /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-g++ -o Debug/kbus-api -Wl,-gc-sections   -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/lib -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/lib -Wl,--start-group Debug/get_config.o Debug/json.o Debug/kbus-api.o Debug/kbus.o Debug/led.o Debug/logger.o Debug/mqtt.o Debug/node.o Debug/switch.o -ldal -lglib-2.0 -lffi -lpthread -lrt -llibloader -loslinux -ldl -lncurses -lpcre -lconfig -lgmodule-2.0 -lz -lgio-2.0 -ldbus-glib-1 -lwago_dbus -ldbus-1 -lgobject-2.0 -ldbuskbuscommon -lcrypto -lssl -lmosquitto -loms -ljson-c -ldiagnostic  -Wl,--rpath='$ORIGIN'   -Wl,--end-group

@@ -24,6 +24,7 @@
 #include "node.h"
 #include "get_config.h"
 #include <time.h>
+#include <string.h>
 
 #define MAX_IMG_LENGTH 2048
 
@@ -45,15 +46,17 @@ void analog_channel_object(struct json_object *jobj, struct channel channel)
 
 void simple_channels_object(struct json_object *jobj, struct module module)
 {
+	struct json_object *tmp = json_object_new_object();
 	
 	// add the channels
 	for (int channelIndex = 0; channelIndex < module.channelCount; channelIndex++) 
 	{
+		char chn[10];
+		
 		struct json_object *tmp = json_object_new_object();
 		
 		// build the channel object key
-		char *chn = (char *) malloc(10);
-		asprintf(&chn, "channel%i", (channelIndex + 1));
+		asprintf(chn, "channel%i", (channelIndex + 1));
 		
 		// check for digital
 		if ((!strcmp(module.type, "DI")) || (!strcmp(module.type, "DO")))
@@ -71,8 +74,8 @@ void simple_channels_object(struct json_object *jobj, struct module module)
 		}
 		
 		// free the holding char
-		while (json_object_put(tmp)) {};
-		free(chn);
+		json_object_put(tmp);
+		//free(chn);
 	}
 };
 
@@ -91,19 +94,22 @@ void simple_module_object(struct json_object *jobj , struct module module)
 	simple_channels_object(tmp, module);
 	json_object_object_add(jobj, "channels", json_object_get(tmp));
 	
-	while (json_object_put(tmp)) {};
+	json_object_put(tmp);
 }
 
 void simple_modules_object(struct json_object *jobj, struct node controller)
 {
+	struct json_object *tmp = json_object_new_object();
 	
 	// add the channels
 	for(int moduleIndex = 0 ; moduleIndex < controller.number_of_modules ; moduleIndex++) 
 	{
+		char mod[10];
+		
 		struct json_object *tmp = json_object_new_object();
 		
 		// build the channel object key
-		char *mod = (char *) malloc(10);
+		//mod = (char *) malloc(10 * sizeof(char));
 		asprintf(&mod, "module%i", (moduleIndex + 1)) ;
 		
 		simple_module_object(tmp, controller.modules[moduleIndex]);
@@ -112,8 +118,8 @@ void simple_modules_object(struct json_object *jobj, struct node controller)
 		json_object_object_add(jobj, mod, json_object_get(tmp));
 		
 		// free the holding char
-		while (json_object_put(tmp)) {};
-		free(mod);
+		json_object_put(tmp);
+		//free(mod);
 	}
 }
 
@@ -130,8 +136,7 @@ void main_controller_object(struct json_object *jobj, struct node controller)
 	simple_modules_object(tmp, controller);
 	json_object_object_add(jobj, "modules", json_object_get(tmp));
 	
-	while (json_object_put(tmp)) {};
-	
+	json_object_put(tmp);
 }
 
 void main_message_object(struct json_object *jobj, struct node controller)
@@ -143,7 +148,7 @@ void main_message_object(struct json_object *jobj, struct node controller)
 	main_controller_object(tmp, controller);
 	json_object_object_add(jobj, "controller", json_object_get(tmp));
 	
-	while (json_object_put(tmp)) {};
+	json_object_put(tmp);
 
 }
 
@@ -153,11 +158,14 @@ void build_controller_object(struct mosquitto *mosq, struct node controller)
 	
 	main_message_object(tmp, controller);
 
-	char *jsonString = json_object_to_json_string(tmp);
+	//char *jsonString = json_object_to_json_string(tmp);
 	
-	mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
+	//mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
 	
-	while (json_object_put(tmp)) {};
+
+
+	//json_object_put(tmp);
+	json_object_put(tmp);
 }
 
 /*

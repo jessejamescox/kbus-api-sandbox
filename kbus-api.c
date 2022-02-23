@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 					mosquitto_reconnect(mosq);
 				}
 				
-				if (iCounts >= 50)
+				if (iCounts >= 20)
 				{
 					build_controller_object(mosq, controller);
 					iCounts = 0;
