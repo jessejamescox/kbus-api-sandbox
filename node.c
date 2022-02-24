@@ -99,8 +99,10 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 	return 1;
 }
 
-char *map_switch_state(int switch_state) {
-	switch (switch_state) {
+char *map_switch_state(int *switch_state) {
+	int ss = switch_state;
+	
+	switch (ss) {
 	case -1:
 		return "ERROR";
 	case 0:

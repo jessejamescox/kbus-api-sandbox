@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 			if (initialized)
 			{
 				// send one last object to notify the system that it is stopped
-				build_controller_object(mosq, controller);
+				build_controller_object(mosq, &controller);
 				
 				// set the led to stop
 				set_led(IS_STOPPED);
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 				
 				if (iCounts >= 20)
 				{
-					build_controller_object(mosq, controller);
+					build_controller_object(mosq, &controller);
 					iCounts = 0;
 				}
 				else
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 				}
 				
 				// do the kbus work
-				kbus_resp = kbus_read(mosq, this_config, kbus);//, controller);
+				kbus_resp = kbus_read(&mosq, &this_config, &kbus);//, controller);
 				
 				// send some error stuff if needed
 				if (kbus_resp != 0) 
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 						controller.number_of_modules = kbus.terminalCount;
 					}
 				}
-				build_controller_object(mosq, controller);
+				build_controller_object(mosq, &controller);
 				initialized = 1;
 				set_led(IS_RUNNING);
 

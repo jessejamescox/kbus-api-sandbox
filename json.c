@@ -31,65 +31,63 @@
 struct prog_config this_config;
 
 // helper functions
-void dig_channel_object(struct json_object *jobj, struct channel channel)
+void dig_channel_object(struct json_object *jobj, struct channel *channel)
 {
-	json_object_object_add(jobj, "value", json_object_new_boolean(channel.value)); 
-	json_object_object_add(jobj, "label", json_object_new_string(channel.label)); 	
+	json_object_object_add(jobj, "value", json_object_new_boolean(channel->value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(channel->label)); 	
 }
 
-void analog_channel_object(struct json_object *jobj, struct channel channel)
+void analog_channel_object(struct json_object *jobj, struct channel *channel)
 {	
-	json_object_object_add(jobj, "value", json_object_new_boolean(channel.value)); 
-	json_object_object_add(jobj, "deadband", json_object_new_int(channel.deadband));
-	json_object_object_add(jobj, "label", json_object_new_string(channel.label)); 
+	
+	json_object_object_add(jobj, "value", json_object_new_boolean(channel->value)); 
+	json_object_object_add(jobj, "deadband", json_object_new_int(channel->deadband));
+	json_object_object_add(jobj, "label", json_object_new_string(channel->label)); 
 }
 
-void simple_channels_object(struct json_object *jobj, struct module module)
-{
-	struct json_object *tmp = json_object_new_object();
-	
+void simple_channels_object(struct json_object *jobj, struct module *module)
+{	
 	// add the channels
-	for (int channelIndex = 0; channelIndex < module.channelCount; channelIndex++) 
+	for (int channelIndex = 0; channelIndex < module->channelCount; channelIndex++) 
 	{
-		char *chn;	//[10];
 		
 		struct json_object *tmp = json_object_new_object();
 		
 		// build the channel object key
-		chn = (char *) malloc(10 * sizeof(char));
+		char *chn = (char *) malloc(10 * sizeof(char));
 		asprintf(chn, "channel%i", (channelIndex + 1));
 		
 		// check for digital
-		if ((!strcmp(module.type, "DI")) || (!strcmp(module.type, "DO")))
+		if ((!strcmp(module->type, "DI")) || (!strcmp(module->type, "DO")))
 		{
-			dig_channel_object(tmp, module.channel[channelIndex]);
+			dig_channel_object(tmp, &module->channel[channelIndex]);
 			json_object_object_add(jobj, chn, json_object_get(tmp));
 		
 		}
 		
 		// check for typical analog
-		if ((!strcmp(module.type, "AI")) || (!strcmp(module.type, "AO")))
+		if ((!strcmp(module->type, "AI")) || (!strcmp(module->type, "AO")))
 		{
-			analog_channel_object(tmp, module.channel[channelIndex]);
+			analog_channel_object(tmp, &module->channel[channelIndex]);
 			json_object_object_add(jobj, chn, json_object_get(tmp));
 		}
 		
 		// free the holding char
+		free(*chn);
 		json_object_put(tmp);
-		free(chn);
 	}
 };
 
-void simple_module_object(struct json_object *jobj , struct module module)
+void simple_module_object(struct json_object *jobj , struct module *module)
 {
 	struct json_object *tmp = json_object_new_object();
 	
 	// add the module info
-	json_object_object_add(jobj, "pn", json_object_new_int(module.pn));
-	json_object_object_add(jobj, "position", json_object_new_int(module.position));
-	json_object_object_add(jobj, "type", json_object_new_string(module.type));
-	json_object_object_add(jobj, "input_channel_count", json_object_new_int(module.inChannelCount));
-	json_object_object_add(jobj, "output_channel_count", json_object_new_int(module.outChannelCount));
+	json_object_object_add(jobj, "pn", json_object_new_int(module->pn));
+	json_object_object_add(jobj, "position", json_object_new_int(module->position));
+	json_object_object_add(jobj, "type", json_object_new_string(module->type));
+	json_object_object_add(jobj, "input_channel_count", json_object_new_int(module->inChannelCount));
+	json_object_object_add(jobj, "output_channel_count", json_object_new_int(module->outChannelCount));
 	
 	// add the channel info
 	simple_channels_object(tmp, module);
@@ -98,40 +96,39 @@ void simple_module_object(struct json_object *jobj , struct module module)
 	json_object_put(tmp);
 }
 
-void simple_modules_object(struct json_object *jobj, struct node controller)
+void simple_modules_object(struct json_object *jobj, struct node *controller)
 {
 	struct json_object *tmp = json_object_new_object();
 	
 	// add the channels
-	for(int moduleIndex = 0 ; moduleIndex < controller.number_of_modules ; moduleIndex++) 
-	{
-		char *mod; //[10];
+	for(int moduleIndex = 0 ; moduleIndex < controller->number_of_modules ; moduleIndex++) 
+	{;
 		
 		struct json_object *tmp = json_object_new_object();
 		
 		// build the channel object key
-		mod = (char *) malloc(10 * sizeof(char));
+		char *mod = (char *) malloc(10 * sizeof(char));
 		asprintf(&mod, "module%i", (moduleIndex + 1)) ;
 		
-		simple_module_object(tmp, controller.modules[moduleIndex]);
+		simple_module_object(tmp, controller->modulesmodules[moduleIndex]);
 		
 		// build the objects in a loop
 		json_object_object_add(jobj, mod, json_object_get(tmp));
 		
 		// free the holding char
 		json_object_put(tmp);
-		free(mod);
+		free(*mod);
 	}
 }
 
-void main_controller_object(struct json_object *jobj, struct node controller)
+void main_controller_object(struct json_object *jobj, struct node *controller)
 {
 	struct json_object *tmp = json_object_new_object();
 	
 	// add the module info
-	json_object_object_add(jobj, "node_id", json_object_new_string(controller.nodeId));
-	json_object_object_add(jobj, "switch_state", json_object_new_string(controller.switch_state));
-	json_object_object_add(jobj, "module_count", json_object_new_int(controller.number_of_modules));
+	json_object_object_add(jobj, "node_id", json_object_new_string(controller->nodeId));
+	json_object_object_add(jobj, "switch_state", json_object_new_string(controller->switch_state));
+	json_object_object_add(jobj, "module_count", json_object_new_int(controller->number_of_modules));
 	
 	// add the channel info
 	simple_modules_object(tmp, controller);
@@ -140,7 +137,7 @@ void main_controller_object(struct json_object *jobj, struct node controller)
 	json_object_put(tmp);
 }
 
-void main_message_object(struct json_object *jobj, struct node controller)
+void main_message_object(struct json_object *jobj, struct node *controller)
 {
 	
 	struct json_object *tmp = json_object_new_object();
@@ -153,18 +150,20 @@ void main_message_object(struct json_object *jobj, struct node controller)
 
 }
 
-void build_controller_object(struct mosquitto *mosq, struct node controller) 
+void build_controller_object(struct mosquitto *mosq, struct node *controller) 
 { 
 	struct json_object *tmp = json_object_new_object();
 	
 	main_message_object(tmp, controller);
-
+	
 	char *jsonString = json_object_to_json_string(tmp);
 	
 	mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
-
+	
+	
 	json_object_put(tmp);
 	json_object_put(tmp);
+	//printf("Free: %i\n", jFree);	
 }
 
 
