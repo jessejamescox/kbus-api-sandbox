@@ -16,12 +16,12 @@ C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(156,21): warning : initiali
     156 |  char *jsonString = json_object_to_json_string(jsState);
         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
   C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_event_object'
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(189,2): warning : implicit declaration of function ‘asprintf’; did you mean ‘vsprintf’?
-    189 |  asprintf(&md, "module%i", (modulePosition + 1));
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(171,2): warning : implicit declaration of function ‘asprintf’; did you mean ‘vsprintf’?
+    171 |  asprintf(&md, "module%i", (modulePosition + 1));
         |  ^~~~~~~~
         |  vsprintf
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(231,87): warning : passing argument 1 of ‘json_object_new_int’ makes integer from pointer without a cast
-    231 |  json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)); // faulting here?? changed this to int
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(213,87): warning : passing argument 1 of ‘json_object_new_int’ makes integer from pointer without a cast
+    213 |  json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)); // faulting here?? changed this to int
         |                                                                             ~~~~~~~~~~^~~~~~~~~~~~~
         |                                                                                       |
         |                                                                                       char *
@@ -31,11 +31,11 @@ C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(231,87): warning : passing 
   C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json_object.h(473,28): note : expected ‘int32_t’ {aka ‘int’} but argument is of type ‘char *’
     473 | extern struct json_object* json_object_new_int(int32_t i);
         |                            ^~~~~~~~~~~~~~~~~~~
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(243,23): warning : initialization discards ‘const’ qualifier from pointer target type
-    243 |  char *event_string = json_object_to_json_string(jsonMain);
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(225,23): warning : initialization discards ‘const’ qualifier from pointer target type
+    225 |  char *event_string = json_object_to_json_string(jsonMain);
         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
   C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_error_object'
-C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(367,24): warning : initialization discards ‘const’ qualifier from pointer target type
-    367 |  char *return_string = json_object_to_json_string(json_error_object);
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(349,24): warning : initialization discards ‘const’ qualifier from pointer target type
+    349 |  char *return_string = json_object_to_json_string(json_error_object);
         |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
   /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-g++ -o Debug/kbus-api -Wl,-gc-sections   -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/lib -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/lib -Wl,--start-group Debug/get_config.o Debug/json.o Debug/kbus-api.o Debug/kbus.o Debug/led.o Debug/logger.o Debug/mqtt.o Debug/node.o Debug/switch.o Debug/utils.o -ldal -lglib-2.0 -lffi -lpthread -lrt -llibloader -loslinux -ldl -lncurses -lpcre -lconfig -lgmodule-2.0 -lz -lgio-2.0 -ldbus-glib-1 -lwago_dbus -ldbus-1 -lgobject-2.0 -ldbuskbuscommon -lcrypto -lssl -lmosquitto -loms -ljson-c -ldiagnostic  -Wl,--rpath='$ORIGIN'   -Wl,--end-group

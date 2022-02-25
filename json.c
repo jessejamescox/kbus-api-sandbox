@@ -60,8 +60,8 @@ struct json_object *simple_channels_object(int mp)
 	// add the channels
 	for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++) 
 	{
-		
 		// build the channel object key
+
 		char *chn = (char *) malloc(10 * sizeof(char)); 
 		strcpy(chn, "channel");
 		char *ch;
@@ -161,24 +161,6 @@ void build_controller_object(struct mosquitto *mosq)
 	while (json_object_put(jsReported)) {};
 	while (json_object_put(jsState)) {};
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void build_event_object(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue) {
