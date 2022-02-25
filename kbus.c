@@ -144,6 +144,20 @@ bool kbus_read_digital(int *i_modules, int *i_channels, struct kbus *kbus)
 	return xOut;
 }
 
+int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
+{
+	int iMod =  i_modules;
+	int iChan = i_channels;
+	
+	int xOut;
+	// read inputs by channel		            
+	int byteOffset = ((controller.modules[iMod].bitOffsetIn / 8) + (iChan * 2));
+	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &controller.modules[i_modules].channel[i_channels].value);
+	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
+	return xOut;
+}
+
 int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kbus *kbus){//, struct node controller) {
 
 	// create the error watch object
@@ -180,20 +194,12 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 			if (!strcmp(controller.modules[i_modules].type, "DI") || (!strcmp(controller.modules[i_modules].type, "DX")))
 			{
 				controller.modules[i_modules].channel[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
-				// read inputs by channel		            
-				//adi->ReadStart(kbus.kbusDeviceId, kbus.taskId); // lock PD-In data 
-				//adi->ReadBool(kbus.kbusDeviceId, kbus.taskId, (kbus.terminalDescription[i_modules].OffsetInput_bits + i_channels), (bool *) &controller.modules[i_modules].channelData[i_channels]);
-				//adi->ReadEnd(kbus.kbusDeviceId, kbus.taskId); // unlock PD-In data 
 			}
 	
 			int compRespAI = strcmp(controller.modules[i_modules].type, "AI");
 			if (!compRespAI) 
 			{
-				// read inputs
-				int byteOffset = ((controller.modules[i_modules].bitOffsetIn / 8) + (i_channels * 2));
-				adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
-				adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &controller.modules[i_modules].channel[i_channels].value);
-				adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
+				controller.modules[i_modules].channel[i_channels].value = kbus_read_analog(i_modules, i_channels, kbus);
 			}
 //			if (controller.modules[i_modules].channel[i_channels].value != controllerLast.modules[i_modules].channel[i_channels].value) {
 //				if (!initState) 

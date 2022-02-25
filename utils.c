@@ -79,3 +79,15 @@ char* itoa(int value, char* buffer, int base)
 	// reverse the string and return it
 	return reverse(buffer, 0, i - 1);
 }
+
+float bytes_to_float(__uint8_t hsb, __uint8_t hmsb, __uint8_t lmsb, __uint8_t lsb)
+{
+	float f;
+	__uint8_t b[4];
+	b[0] = lsb;
+	b[1] = lmsb;
+	b[2] = hmsb;
+	b[3] = hsb;
+	memcpy(&f, &b, sizeof(f));
+	return f;
+}
