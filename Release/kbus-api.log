@@ -1,0 +1,5 @@
+﻿  SSH: Connecting...
+  SSH: Error
+EXEC : Connection error : A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond 192.168.27.140:22
+  Build/launch failed: Cannot establish an SSH connection
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.MakeFile.Targets(45,5): error MSB3073: The command ""C:\Program Files (x86)\Sysprogs\VisualGDB\\VisualGDB.exe" /build "C:\Users\JC\Documents\GitHub\kbus-api-sandbox\kbus-api.vcxproj" "/solution:C:\Users\JC\Documents\GitHub\kbus-api-sandbox\kbus-api.sln"  "/config:Release" "/platform:Win32"" exited with code 1.

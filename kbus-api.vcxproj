@@ -66,10 +66,12 @@
     <ClInclude Include="kbus.h" />
     <ClInclude Include="led.h" />
     <ClInclude Include="logger.h" />
+    <ClInclude Include="module.h" />
     <ClInclude Include="mqtt.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="switch.h" />
     <ClInclude Include="timer.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -84,6 +86,7 @@
     <ClCompile Include="mqtt.c" />
     <ClCompile Include="node.c" />
     <ClCompile Include="switch.c" />
+    <ClCompile Include="utils.c" />
     <None Include="Makefile" />
     <None Include="debug.mak" />
     <None Include="release.mak" />

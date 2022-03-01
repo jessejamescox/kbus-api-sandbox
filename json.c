@@ -1,18 +1,22 @@
-//  This file is part of kbus_mqtt_client.
-//--------------------------------------------------------------------------
-//  kbus_mqtt_client is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//--------------------------------------------------------------------------
-//  kbus_mqtt_client is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//--------------------------------------------------------------------------
-//  You should have received a copy of the GNU General Public License
-//  along with kbus_mqtt_client.  If not, see <https://www.gnu.org/licenses/>.
-//--------------------------------------------------------------------------
+//Copyright <2022> <Jesse Cox>
+//
+//Permission is hereby granted, free of charge, to any person obtaining a copy of this 
+//software and associated documentation files (the "Software"), to deal in the Software 
+//without restriction, including without limitation the rights to use, copy, modify, 
+//merge, publish, distribute, sublicense, and/or sell copies of the Software, and to 
+//permit persons to whom the Software is furnished to do so, subject to the following:
+
+//The above copyright notice and this permission notice shall be included in all copies
+//or substantial portions of the Software.
+
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+//INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+//PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+//HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+//CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+//OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,148 +27,141 @@
 #include "json.h"
 #include "node.h"
 #include "get_config.h"
+#include "utils.h"
 #include <time.h>
+#include <string.h>
 
 #define MAX_IMG_LENGTH 2048
 
-struct prog_config this_config;
 
-char *build_error_object(bool error, struct node controller, struct prog_config this_config, char *error_msg) {
-	struct json_object *json_error_object = json_object_new_object();
-	json_object_object_add(json_error_object, "node_id", json_object_new_string(this_config.node_id));
-	json_object_object_add(json_error_object, "switch_state", json_object_new_string(controller.switch_state));
-	json_object_object_add(json_error_object, "error", json_object_new_boolean(error));
-	json_object_object_add(json_error_object, "error_msg", json_object_new_string(error_msg));
-	char *return_string = json_object_to_json_string(json_error_object);
-	return return_string;
+// helper functions
+struct json_object *dig_channel_object(int mp, int cp)
+{
+	struct json_object *jobj = json_object_new_object();
+	json_object_object_add(jobj, "value", json_object_new_int(controller.modules[mp].channel[cp].value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 	
+	
+	return jobj;
 }
 
-int build_controller_object(struct mosquitto *mosq, struct node controller) {
+struct json_object *analog_channel_object(int mp, int cp)
+{	
+	struct json_object *jobj = json_object_new_object();
+	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 
+	json_object_object_add(jobj, "deadband", json_object_new_int(controller.modules[mp].channel[cp].deadband)); 
+	return jobj;
+}
+
+struct json_object *simple_channels_object(int mp)
+{	
+	struct json_object *jobj = json_object_new_object();
 	
-	//index vars
-	int iModules, iChannels;
-	
-	int myJsonLen = 0;
-	int myJsonPuts = 0;
-	
-	// main object creation
-	struct json_object	*jsonMain		= json_object_new_object();
-	struct json_object	*jsonState		= json_object_new_object();
-	struct json_object	*jsonReported	= json_object_new_object();
-	struct json_object	*jsonController	= json_object_new_object();
-	struct json_object	*jsonModules	= json_object_new_object();
-	//struct json_object	*jsonChannel	= json_object_new_object();
-	//struct json_object	*jsonModule		= json_object_new_object();
-	//struct json_object	*jsonChannels	= json_object_new_object();
-	
-	for (iModules = 0; iModules < controller.number_of_modules; iModules++) {
+	// add the channels
+	for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++) 
+	{
+		// build the channel object key
+
+		char *chn = (char *) malloc(10 * sizeof(char)); 
+		strcpy(chn, "channel");
+		char *ch;
+		itoa((channelIndex + 1), ch, 10);
 		
-		struct json_object	*jsonModule		= json_object_new_object();
-		struct json_object	*jsonChannels	= json_object_new_object();
+		strcat(chn, ch);
 		
-		// build the module object one-by-one
-		char *mod = (char *) malloc(10);
-		asprintf(&mod, "module%i", (iModules + 1));
-		
-		for (iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++) {
-			
-			struct json_object	*jsonChannel = json_object_new_object();
-			
-			if (!strcmp(controller.modules[iModules].type, "DI"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_boolean(controller.modules[iModules].channelData[iChannels]));
-			}
-			if (!strcmp(controller.modules[iModules].type, "DO"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_boolean(controller.modules[iModules].channelData[iChannels]));
-			}
-			if (!strcmp(controller.modules[iModules].type, "AI"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_int(controller.modules[iModules].channelData[iChannels]));
-			}
-			if (!strcmp(controller.modules[iModules].type, "AO"))
-			{
-				json_object_object_add(jsonChannel, "value", json_object_new_int(controller.modules[iModules].channelData[iChannels]));
-			}
-			
-			// build the modules channels one-by-one
-			char *chn = (char *) malloc(10);
-			asprintf(&chn, "channel%i", (iChannels + 1));
-			
-			// build the module object
-			json_object_object_add(jsonChannels, chn, json_object_get(jsonChannel));
-			
-			// ***** do I need to free this?? 
-			myJsonLen = json_object_object_length(jsonChannel);
-			while (json_object_put(jsonChannel) != 0) 
-			{
-				json_object_put(jsonChannel);
-			};
-			myJsonLen = json_object_object_length(jsonChannel);
-			free(chn);
-			
-		}
-		
-		json_object_object_add(jsonModule, "pn", json_object_new_int(controller.modules[iModules].pn));
-		json_object_object_add(jsonModule, "module_type", json_object_new_string(controller.modules[iModules].type));
-		json_object_object_add(jsonModule, "position", json_object_new_int(iModules + 1));
-		json_object_object_add(jsonModule, "channel_count", json_object_new_int(controller.modules[iModules].channelCount));
-		json_object_object_add(jsonModule, "channels", json_object_get(jsonChannels));
-		
-		myJsonLen = json_object_object_length(jsonChannels);
-		json_object_put(jsonChannels);
-		
-		// add this to the reported object
-		json_object_object_add(jsonModules, mod, json_object_get(jsonModule));
-		
-		myJsonLen = json_object_object_length(jsonModule);
-		while (json_object_put(jsonModule) != 0)
+		// check for digital
+		if ((!strcmp(controller.modules[mp].type, "DI")) || (!strcmp(controller.modules[mp].type, "DO")))
 		{
-			myJsonPuts = json_object_put(jsonModule);
+			json_object_object_add(jobj, chn, dig_channel_object(mp, channelIndex));
 		}
-		myJsonLen = json_object_object_length(jsonModule);
-		free(mod);
 		
+		// check for typical analog
+		if ((!strcmp(controller.modules[mp].type, "AI")) || (!strcmp(controller.modules[mp].type, "AO")))
+		{
+			json_object_object_add(jobj, chn, analog_channel_object(mp, channelIndex));
+		}	
+		
+		free(chn);
 	}
+	return jobj;
+};
+
+struct json_object *simple_module_object(int mp)
+{
+	struct json_object *jobj = json_object_new_object();
 	
-	// build the main json object	
-	json_object_object_add(jsonController, "node_id", json_object_new_string(controller.nodeId));
-	json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state));
-	json_object_object_add(jsonController, "module_count", json_object_new_int(controller.number_of_modules));
+	// add the module info
+	json_object_object_add(jobj, "pn", json_object_new_int(controller.modules[mp].pn));
+	json_object_object_add(jobj, "position", json_object_new_int(controller.modules[mp].position));
+	json_object_object_add(jobj, "type", json_object_new_string(controller.modules[mp].type));
+	json_object_object_add(jobj, "input_channel_count", json_object_new_int(controller.modules[mp].inChannelCount));
+	json_object_object_add(jobj, "output_channel_count", json_object_new_int(controller.modules[mp].outChannelCount));
 	
-	// add this to the reported object
-	json_object_object_add(jsonController, "modules", json_object_get(jsonModules));
-	//json_object_put(jsonModules);
+	// add the channel info
+	json_object_object_add(jobj, "channels", simple_channels_object(mp));
 	
-	// add this to the reported object
-	json_object_object_add(jsonReported, "controller", json_object_get(jsonController));
-	//json_object_put(jsonController);
-	
-	// add the module to the reported
-	json_object_object_add(jsonState, "reported", json_object_get(jsonReported));
-	//json_object_put(jsonReported);
-	
-	// add the reported to the state
-	json_object_object_add(jsonMain, "state", json_object_get(jsonState));
-	//json_object_put(jsonState);
-	
-	char *controller_string = json_object_to_json_string(jsonMain);
-	
-	
-	int pub_resp = mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(controller_string), controller_string, 0, 0);
-	
-	
-	//json_object_put(jsonChannel);
-	//json_object_put(jsonChannels);
-	//json_object_put(jsonModule);
-	json_object_put(jsonModules);
-	json_object_put(jsonController);
-	json_object_put(jsonReported);
-	json_object_put(jsonState);
-	json_object_put(jsonMain);
-	
-	return 0;
+	return jobj;
 }
+
+struct json_object *simple_modules_object()
+{
+	struct json_object *jobj = json_object_new_object(); 
+	
+	// add the channels
+	for(int moduleIndex = 0 ; moduleIndex < controller.number_of_modules ; moduleIndex++) 
+	{		
+		
+		// build the channel object key
+		char *mod = (char *) malloc(10 * sizeof(char)); 
+		strcpy(mod, "module");
+		char *mi;
+		itoa((moduleIndex + 1), mi, 10);
+		strcat(mod, mi);
+		
+		// build the objects in a loop
+		json_object_object_add(jobj, mod, simple_module_object(moduleIndex));
+		
+		// free the holding char
+		free(mod);
+	}
+	return jobj;
+}
+
+struct json_object *main_controller_object()
+{
+	struct json_object *jobj = json_object_new_object();
+	
+	// add the module info
+	json_object_object_add(jobj, "node_id", json_object_new_string(controller.nodeId));
+	json_object_object_add(jobj, "switch_state", json_object_new_string(controller.switch_state));
+	json_object_object_add(jobj, "module_count", json_object_new_int(controller.number_of_modules));
+	
+	// add the channel info
+	json_object_object_add(jobj, "modules", simple_modules_object());
+	
+	return jobj;
+}
+
+void build_controller_object(struct mosquitto *mosq) 
+{ 
+	struct json_object *jsState = json_object_new_object();
+	struct json_object *jsReported = json_object_new_object();
+	struct json_object *jsController = json_object_new_object();//
+	
+	json_object_object_add(jsController, "controller", main_controller_object());
+	json_object_object_add(jsReported, "reported", jsController);
+	json_object_object_add(jsState, "state", jsReported);
+	
+	//char *jsonString = (char *) malloc(4096 * sizeof(char));
+	char *jsonString = json_object_to_json_string(jsState);
+	
+	mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
+	
+	while (json_object_put(jsController)) {};
+	while (json_object_put(jsReported)) {};
+	while (json_object_put(jsState)) {};
+}
+
 
 void build_event_object(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue) {
 	
@@ -270,7 +267,10 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 					
 					for (int iModules = 0; iModules < controller.number_of_modules; iModules++) {
 
-						asprintf(&mod, "module%i", (iModules + 1));
+						strcpy(mod, "module");
+						char *mi;
+						itoa((iModules + 1), mi, 10);
+						strcat(mod, mi);
 						
 						// find the object 
 						if (json_object_object_get_ex(jsonHold, mod, &jsonHold2)) {
@@ -284,7 +284,11 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 								// search for the channels
 								for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
 								{
-									asprintf(&chn, "channel%i", (iChannels + 1));
+
+									strcpy(chn, "channel");
+									char *ch;
+									itoa((iChannels + 1), ch, 10);
+									strcat(chn, ch);
 									
 									// find the object 
 									if (json_object_object_get_ex(jsonHold2, chn, &jsonHold2))
@@ -335,4 +339,13 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	//return error
 	return 0;
 }
-;
+
+char *build_error_object(bool error, struct node controller, struct prog_config this_config, char *error_msg) {
+	struct json_object *json_error_object = json_object_new_object();
+	json_object_object_add(json_error_object, "node_id", json_object_new_string(this_config.node_id));
+	json_object_object_add(json_error_object, "switch_state", json_object_new_string(controller.switch_state));
+	json_object_object_add(json_error_object, "error", json_object_new_boolean(error));
+	json_object_object_add(json_error_object, "error_msg", json_object_new_string(error_msg));
+	char *return_string = json_object_to_json_string(json_error_object);
+	return return_string;
+}
