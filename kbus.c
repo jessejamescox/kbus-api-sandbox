@@ -153,7 +153,7 @@ int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 	// read inputs by channel		            
 	int byteOffset = ((controller.modules[iMod].bitOffsetIn / 8) + (iChan * 2));
 	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
-	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &controller.modules[i_modules].channel[i_channels].value);
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &controller.modules[iMod].channel[iChan].value);
 	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
 	return xOut;
 }
