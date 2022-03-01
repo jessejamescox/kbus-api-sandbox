@@ -66,7 +66,7 @@
     <ClInclude Include="kbus.h" />
     <ClInclude Include="led.h" />
     <ClInclude Include="logger.h" />
-    <ClInclude Include="module.h" />
+    <ClInclude Include="modutils.h" />
     <ClInclude Include="mqtt.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="switch.h" />
@@ -83,6 +83,7 @@
     <ClCompile Include="kbus.c" />
     <ClCompile Include="led.c" />
     <ClCompile Include="logger.c" />
+    <ClCompile Include="modutils.c" />
     <ClCompile Include="mqtt.c" />
     <ClCompile Include="node.c" />
     <ClCompile Include="switch.c" />

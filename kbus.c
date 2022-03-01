@@ -153,7 +153,7 @@ int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 	// read inputs by channel		            
 	int byteOffset = ((controller.modules[iMod].bitOffsetIn / 8) + (iChan * 2));
 	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
-	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &controller.modules[iMod].channel[iChan].value);
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &xOut);
 	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
 	return xOut;
 }
@@ -236,7 +236,7 @@ int kbus_write(struct mosquitto *mosq, struct node controller, int modulePositio
 		}
 		else {
 			kbus_write_analog(modulePosition, channelPosition, channelValue);
-			build_event_object(mosq, controller, modulePosition, channelPosition, channelValue);
+			build_event_object(mosq, modulePosition, channelPosition, channelValue);
 		}
 	}
 	else {
@@ -245,6 +245,6 @@ int kbus_write(struct mosquitto *mosq, struct node controller, int modulePositio
 			writeVal = true;
 		}
 		kbus_write_digital(modulePosition, channelPosition, writeVal);
-		build_event_object(mosq, controller, modulePosition, channelPosition, channelValue);
+		build_event_object(mosq, modulePosition, channelPosition, channelValue);
 	}
 }

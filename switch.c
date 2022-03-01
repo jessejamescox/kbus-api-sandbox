@@ -14,6 +14,7 @@
 //  along with kbus_mqtt_client.  If not, see <https://www.gnu.org/licenses/>.
 //--------------------------------------------------------------------------
 
+ 
 #include <stdio.h>
 #include <stdint.h>
 #include <time.h>
@@ -32,6 +33,7 @@ int get_switch_state(void) {
 	// generic vars
 	int32_t switchState  = 0;
 	uint8_t button_state = 0;
+	int outVal = 0;
 
 	tOmsReturn retval; //Unused retval of omsDev->Get..()
 
@@ -84,28 +86,46 @@ int get_switch_state(void) {
 	{
 	case BUTTON_RUN:
 		//printf("RUN");
-		return 1;
+		outVal = 1;
 		break;
 	case BUTTON_STOP:
 		//printf("STOP");
-		return 0;
+		outVal = 0;
 		break;
 	case BUTTON_RESET:
 		//printf("RESET");
-		return 3;
+		outVal = 3;
 		break;
 	default:
 		//printf("ERROR");
-		return -1;
+		outVal = -1;
 		break;
 	}
 
 	//if also BUTTON_RESET_ALL is active add this to output
 	if (button_state & BUTTON_RESET_ALL)
 	{
-		;//printf("-RESET_ALL");
+		//printf("-RESET_ALL");
 	}
 
-	//printf("\n");  //flush to stdout
-	//return 0;
+	//printf("\n"); //flush to stdout
+	return outVal;
+}
+char *map_switch_state(int *switch_state) {
+	int ss = switch_state;
+	
+	switch (ss) {
+	case -1:
+		return "ERROR";
+	case 0:
+		return "STOP";
+	case 1:
+		return "RUN";
+	case 8:
+		return "RESET";
+	case 128:
+		return "RESET_ALL";
+	default:
+		return "NA";
+	}
 }

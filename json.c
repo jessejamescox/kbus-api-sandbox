@@ -35,16 +35,34 @@
 
 
 // helper functions
-struct json_object *dig_channel_object(int mp, int cp)
+struct json_object *dig_in_channel_object(int mp, int cp)
 {
 	struct json_object *jobj = json_object_new_object();
-	json_object_object_add(jobj, "value", json_object_new_int(controller.modules[mp].channel[cp].value)); 
+	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)); 
 	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 	
 	
 	return jobj;
 }
 
-struct json_object *analog_channel_object(int mp, int cp)
+struct json_object *dig_out_channel_object(int mp, int cp)
+{
+	struct json_object *jobj = json_object_new_object() ;
+	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)) ; 
+	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 	
+	
+	return jobj ;
+}
+
+struct json_object *analog_in_channel_object(int mp, int cp)
+{	
+	struct json_object *jobj = json_object_new_object();
+	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 
+	json_object_object_add(jobj, "deadband", json_object_new_int(controller.modules[mp].channel[cp].deadband)); 
+	return jobj;
+}
+
+struct json_object *analog_out_channel_object(int mp, int cp)
 {	
 	struct json_object *jobj = json_object_new_object();
 	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)); 
@@ -69,17 +87,29 @@ struct json_object *simple_channels_object(int mp)
 		
 		strcat(chn, ch);
 		
-		// check for digital
-		if ((!strcmp(controller.modules[mp].type, "DI")) || (!strcmp(controller.modules[mp].type, "DO")))
+		// check for digital in
+		if (!strcmp(controller.modules[mp].type, "DI"))
 		{
-			json_object_object_add(jobj, chn, dig_channel_object(mp, channelIndex));
+			json_object_object_add(jobj, chn, dig_in_channel_object(mp, channelIndex));
 		}
 		
-		// check for typical analog
-		if ((!strcmp(controller.modules[mp].type, "AI")) || (!strcmp(controller.modules[mp].type, "AO")))
+		// check for digital out
+		if (!strcmp(controller.modules[mp].type, "DO"))
 		{
-			json_object_object_add(jobj, chn, analog_channel_object(mp, channelIndex));
+			json_object_object_add(jobj, chn, dig_out_channel_object(mp, channelIndex));
+		}
+		
+		// check for analog in
+		if (!strcmp(controller.modules[mp].type, "AI"))
+		{
+			json_object_object_add(jobj, chn, analog_in_channel_object(mp, channelIndex));
 		}	
+		
+		// check for analog out
+		if (!strcmp(controller.modules[mp].type, "AO"))
+		{
+			json_object_object_add(jobj, chn, analog_out_channel_object(mp, channelIndex));
+		}
 		
 		free(chn);
 	}
@@ -163,13 +193,20 @@ void build_controller_object(struct mosquitto *mosq)
 }
 
 
-void build_event_object(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue) {
+void build_event_object(struct mosquitto *mosq, int modulePosition, int channelPosition, int channelValue) {
 	
-	char *ch = (char *) malloc(10);
-	char *md = (char *) malloc(10);
+	char *chn = (char *) malloc(10);
+	char *mod = (char *) malloc(10);
 	
-	asprintf(&md, "module%i", (modulePosition + 1));
-	asprintf(&ch, "channel%i", (channelPosition + 1));
+	strcpy(mod, "module");
+	char *mi;
+	itoa((modulePosition + 1), mi, 10);
+	strcat(mod, mi);
+	
+	strcpy(chn, "channel");
+	char *ch;
+	itoa((channelPosition + 1), ch, 10);
+	strcat(chn, ch);
 	 
 	struct json_object	*jsonMain = json_object_new_object();
 	struct json_object	*jsonState = json_object_new_object();
@@ -200,13 +237,13 @@ void build_event_object(struct mosquitto *mosq, struct node controller, int modu
 	}
 	
 	// build the module object
-	json_object_object_add(jsonChannels, ch, json_object_get(jsonChannel));
+	json_object_object_add(jsonChannels, chn, json_object_get(jsonChannel));
 	
 	json_object_object_add(jsonModule, "channels", json_object_get(jsonChannels));
 	
 	
 	// add this to the reported object
-	json_object_object_add(jsonModules, md, json_object_get(jsonModule));
+	json_object_object_add(jsonModules, mod, json_object_get(jsonModule));
 	
 	// add this to the reported object
 	json_object_object_add(jsonController, "node_id", json_object_new_string(controller.nodeId));
@@ -226,8 +263,8 @@ void build_event_object(struct mosquitto *mosq, struct node controller, int modu
 	
 	int pub_resp = mosquitto_publish(mosq, NULL, this_config.event_pub_topic, strlen(event_string), event_string, 0, 0);
 	
-	free(md);
-	free(ch);
+	free(mod);
+	free(chn);
 	
 	// free the owner
 	json_object_put(jsonChannel);

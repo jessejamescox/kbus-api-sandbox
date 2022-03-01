@@ -63,6 +63,9 @@
     <ClCompile Include="utils.c">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="modutils.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -98,10 +101,10 @@
     <ClInclude Include="timer.h">
       <Filter>Header files</Filter>
     </ClInclude>
-    <ClInclude Include="module.h">
+    <ClInclude Include="utils.h">
       <Filter>Header files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="modutils.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>

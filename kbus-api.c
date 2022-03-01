@@ -55,11 +55,6 @@ int kbusIsInit = 1;
 
 int iCounts = 0;
 
-void selector_switch()
-{
-	switch_state = get_switch_state();
-}
-
 int main(int argc, char *argv[])
 {
 	uint8_t reconnect = true;
@@ -77,13 +72,12 @@ int main(int argc, char *argv[])
 
 	while (1)
 	{
-		// get the run stop reset switch value
-		selector_switch();
-		
-		controller.switch_state = map_switch_state(switch_state);
+
+		controller.ss = get_switch_state();
+		controller.switch_state = map_switch_state(controller.ss);
 
 		// run based on selector switch
-		switch (switch_state)
+		switch (controller.ss)
 		{
 			// stopped
 		case 0:
@@ -113,8 +107,9 @@ int main(int argc, char *argv[])
 			// run
 		case 1:
 
-			if (initialized == 1)
+			while(initialized && (controller.ss == 1))//if (initialized == 1)
 			{
+				controller.ss = get_switch_state();
 				
 				rc = mosquitto_loop(mosq, -1, 1);
 				if (run && rc)
@@ -125,29 +120,25 @@ int main(int argc, char *argv[])
 					sleep(3);
 					mosquitto_reconnect(mosq);
 				}
-				
-				if (iCounts >= 20)
-				{
-					build_controller_object(mosq);
-					iCounts = 0;
-				}
 				else
 				{
-					iCounts++;
-				}
+					// the main event
+					build_controller_object(mosq);
+								
+					// do the kbus work
+					kbus_resp = kbus_read(&mosq, &this_config, &kbus); //, controller);
 				
-				// do the kbus work
-				kbus_resp = kbus_read(&mosq, &this_config, &kbus);//, controller);
-				
-				// send some error stuff if needed
-				if (kbus_resp != 0) 
-				{
-					char *kbus_error_string = build_error_object(true, controller, this_config, "kbus error present");
-					mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(kbus_error_string), kbus_error_string, 0, 0);
+					// send some error stuff if needed
+					if (kbus_resp != 0) 
+					{
+						char *kbus_error_string = build_error_object(true, controller, this_config, "kbus error present");
+						mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(kbus_error_string), kbus_error_string, 0, 0);
+					}	
+					usleep(10000);
 				}
 			}
-			else
-			{
+			//else
+			//{
 				set_led(IS_STOPPED);
 				
 				mosquitto_lib_init();
@@ -191,14 +182,12 @@ int main(int argc, char *argv[])
 				initialized = 1;
 				set_led(IS_RUNNING);
 
-			}
+			//}
 			break;
 			// reset
 		case 3:
 			printf("reset tripped\n");
 			
-			//setRunLEDColor(RUN_COLOR_BLINK);
-
 			// put some cool reset logic here
 			
 			initialized = 0;
