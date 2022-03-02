@@ -73,7 +73,7 @@ struct json_object *dx_out_channel_object(int mp, int cp)
 struct json_object *analog_in_channel_object(int mp, int cp)
 {	
 	struct json_object *jobj = json_object_new_object() ;
-	json_object_object_add(jobj, "value", json_object_new_boolean(aiMod[controller.modules[mp].typeIndex].inData[cp].value)) ; 
+	json_object_object_add(jobj, "value", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].value)) ; 
 	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label)) ; 
 	json_object_object_add(jobj, "deadband", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].deadband)) ; 
 	return jobj ;
@@ -82,8 +82,8 @@ struct json_object *analog_in_channel_object(int mp, int cp)
 struct json_object *analog_out_channel_object(int mp, int cp)
 {	
 	struct json_object *jobj = json_object_new_object() ;
-	json_object_object_add(jobj, "value", json_object_new_boolean(aiMod[controller.modules[mp].typeIndex].inData[cp].value)) ; 
-	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label)) ;
+	json_object_object_add(jobj, "value", json_object_new_int(aoMod[controller.modules[mp].typeIndex].outData[cp].value)) ; 
+	json_object_object_add(jobj, "label", json_object_new_string(aoMod[controller.modules[mp].typeIndex].outData[cp].label));
 	return jobj ;
 }
 
@@ -137,8 +137,8 @@ struct json_object *simple_channels_object(int mp)
 				char *chn = (char *) malloc(10 * sizeof(char)); 
 				strcpy(chn, "channel");
 				char *ch;
-				itoa((channelIndex + 1), ch, 10);
-				strcat(chn, ch);
+				itoa((channelIndex + 1), &ch, 10);
+				strcat(chn, &ch);
 				
 				json_object_object_add(jobj, chn, dig_in_channel_object(mp, channelIndex));
 				
@@ -153,8 +153,8 @@ struct json_object *simple_channels_object(int mp)
 				char *chn = (char *) malloc(10 * sizeof(char)); 
 				strcpy(chn, "channel");
 				char *ch;
-				itoa((channelIndex + 1), ch, 10);
-				strcat(chn, ch);
+				itoa((channelIndex + 1), &ch, 10);
+				strcat(chn, &ch);
 				
 				json_object_object_add(jobj, chn, dig_out_channel_object(mp, channelIndex));
 				
@@ -173,8 +173,8 @@ struct json_object *simple_channels_object(int mp)
 				char *chn = (char *) malloc(10 * sizeof(char)); 
 				strcpy(chn, "channel");
 				char *ch;
-				itoa((channelIndex + 1), ch, 10);
-				strcat(chn, ch);
+				itoa((channelIndex + 1), &ch, 10);
+				strcat(chn, &ch);
 				
 				json_object_object_add(jobj, chn, analog_in_channel_object(mp, channelIndex));
 				
@@ -189,7 +189,7 @@ struct json_object *simple_channels_object(int mp)
 				strcpy(chn, "channel");
 				char *ch;
 				itoa((channelIndex + 1), &ch, 10);
-				strcat(chn, ch);
+				strcat(chn, &ch);
 				
 				json_object_object_add(jobj, chn, analog_out_channel_object(mp, channelIndex));
 				
@@ -365,7 +365,7 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	
 	struct channel_command channelCmd;
 	
-	struct json_object *jsonHold;
+	struct json_object *jsonState, *jsonDesired, *jsonController, *jsonModules, *jsonModule, *jsonChannels, *jsonChannel, *jsonValue, *jsonLabel;
 	
 	int pjFree, jhFree, jh2Free;
 	
@@ -374,72 +374,70 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	// get the main json object
 	struct json_object *parsed_json		= json_tokener_parse(message);
 	
-	mod = (char*)malloc(10 * sizeof(char));
-	chn = (char*)malloc(10 * sizeof(char));
-	
 	// start checking the json objects
-	if (json_object_object_get_ex(parsed_json, "state", &jsonHold)) {
-		if (json_object_object_get_ex(jsonHold, "desired", &jsonHold)) {
-			if (json_object_object_get_ex(jsonHold, "controller", &jsonHold)) {
-				if (json_object_object_get_ex(jsonHold, "modules", &jsonHold)) {
+	if (json_object_object_get_ex(parsed_json, "state", &jsonState)) {
+		if (json_object_object_get_ex(jsonState, "desired", &jsonDesired)) {
+			if (json_object_object_get_ex(jsonDesired, "controller", &jsonController)) {
+				if (json_object_object_get_ex(jsonController, "modules", &jsonModules)) {
+				
 					
-					// still not sure why I have to do this
-					struct json_object *jsonHold2 = jsonHold;
-					
-					for (int iModules = 0; iModules < controller.number_of_modules; iModules++) {
+					for (int iModules = 0; iModules < controller.number_of_modules; iModules++) 
+					{
+						mod = (char*)malloc(10 * sizeof(char));
 
 						strcpy(mod, "module");
 						char *mi;
-						itoa((iModules + 1), mi, 10);
-						strcat(mod, mi);
+						itoa((iModules + 1), &mi, 10);
+						strcat(mod, &mi);
 						
 						// find the object 
-						if (json_object_object_get_ex(jsonHold, mod, &jsonHold2)) {
+						if (json_object_object_get_ex(jsonModules, mod, &jsonModule)) {
 							
 							// found the channel, record the module position
 							channelCmd.module = iModules;
 							
-							if (json_object_object_get_ex(jsonHold2, "channels", &jsonHold2))
+							if (json_object_object_get_ex(jsonModule, "channels", &jsonChannels))
 							{
 							
 								// search for the channels
 								for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
 								{
+									chn = (char*)malloc(10 * sizeof(char));
 
 									strcpy(chn, "channel");
 									char *ch;
-									itoa((iChannels + 1), ch, 10);
-									strcat(chn, ch);
+									itoa((iChannels + 1), &ch, 10);
+									strcat(chn, &ch);
 									
 									// find the object 
-									if (json_object_object_get_ex(jsonHold2, chn, &jsonHold2))
+									if (json_object_object_get_ex(jsonChannels, chn, &jsonChannel))
 									{
-										
+										printf("got here\n");
 										// found the channel, record the module position
 										channelCmd.channel = iChannels;
 										
-										if (json_object_object_get_ex(jsonHold2, "value", &jsonHold2))
+										if (json_object_object_get_ex(jsonChannel, "value", &jsonValue))
 										{
 											
 											// get the channel number
-											channelCmd.value = json_object_get_int(jsonHold2);
+											channelCmd.value = json_object_get_int(jsonValue);
 											kbus_write(mosq, controller, channelCmd.module, channelCmd.channel, channelCmd.value);
 																				
 										}
-										if (json_object_object_get_ex(jsonHold2, "label", &jsonHold2))
+										if (json_object_object_get_ex(jsonChannel, "label", &jsonValue))
 										{
 											
 											// ********** TODO ***************
 											
 																				
-										}
-										
-										jh2Free = json_object_put(jsonHold2);	
+										}	
 										break;
 									}
+									free(chn);
 								}
 							}
 						}
+						free(mod);
 					}
 				}
 			}
@@ -447,17 +445,7 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	}
 
 	// free the owners	
-	
 	pjFree = json_object_put(parsed_json);
-	//printf("pjFree: %d\n", pjFree);
-	pjFree = json_object_put(parsed_json);
-	//printf("pjFree: %d\n", pjFree);
-	
-	jhFree = json_object_put(jsonHold);
-	//printf("jhFree: %d\n", jhFree);
-	
-	free(chn);
-	free(mod);
 	
 	//return error
 	return 0;

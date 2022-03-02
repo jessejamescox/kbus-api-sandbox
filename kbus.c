@@ -140,7 +140,32 @@ int kbus_init(struct kbus *kbus) {
 	}
 }
 
+int kbus_write_digital(int modulePosition, int channelPosition, bool channelValue) {
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBool(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut + channelPosition), channelValue);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
+	doMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
+}
 
+int kbus_write_analog(int modulePosition, int channelPosition, uint16_t channelValue) {
+	
+	// calcualte the byte offset 
+	//int byteOffset;// = controller;
+	int byteOffset = ((controller.modules[modulePosition].bitOffsetOut / 8) + (channelPosition * 2)) ;
+	
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, byteOffset, 2, (uint16_t *)  &channelValue);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
+	aoMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
+}
+
+int kbus_write_pmm(int modulePosition, uint8_t outdata[24])
+{
+	// now send the request
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut), 24, (uint8_t *)  &outdata);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);
+}
 
 
 bool kbus_read_digital(int *i_modules, int *i_channels, struct kbus *kbus)
@@ -175,7 +200,7 @@ int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 }
 
 
-void kbus_read_pmm(int *i_modules, int *i_channels, struct kbus *kbus, struct pmMod *pmm)
+void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 {
 	uint8_t iMod = i_modules;
 	
@@ -193,7 +218,7 @@ void kbus_read_pmm(int *i_modules, int *i_channels, struct kbus *kbus, struct pm
 		(indata[5] == 1) | 
 		(indata[6] == 7) |
 		(indata[7] == 16))
-		{
+	{
 			// first map back the data 
 			pmm->L1.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
 			pmm->L1.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
@@ -206,14 +231,14 @@ void kbus_read_pmm(int *i_modules, int *i_channels, struct kbus *kbus, struct pm
 			outdata[5] = 2;
 			outdata[6] = 8;
 			outdata[7] = 17;
-		}
+	}
 	
 	// getting the L2 data
-	if ((indata[4] == 5) |
+	else if ((indata[4] == 5) |
 		(indata[5] == 2) | 
 		(indata[6] == 8) |
 		(indata[7] == 17))
-		{
+	{
 			pmm->L2.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
 			pmm->L2.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
 			pmm->L2.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
@@ -225,14 +250,14 @@ void kbus_read_pmm(int *i_modules, int *i_channels, struct kbus *kbus, struct pm
 			outdata[5] = 3;
 			outdata[6] = 9;
 			outdata[7] = 18;
-		}
+	}
 	
 	// getting the L3 data
-	if ((indata[4] == 6) |
+	else if ((indata[4] == 6) |
 		(indata[5] == 3) | 
 		(indata[6] == 9) |
 		(indata[7] == 18))
-		{
+	{
 			pmm->L2.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
 			pmm->L2.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
 			pmm->L2.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
@@ -244,12 +269,19 @@ void kbus_read_pmm(int *i_modules, int *i_channels, struct kbus *kbus, struct pm
 			outdata[5] = 1;
 			outdata[6] = 7;
 			outdata[7] = 16;
-		}
+	}
+	else
+	{
+		outdata[1] = 0; // query L3
+		outdata[3] = 10; // get AC vals
+		outdata[4] = 4;
+		outdata[5] = 1;
+		outdata[6] = 7;
+		outdata[7] = 16;
+	}
 	
 	// now send the request
-	adi->WriteStart(kbus->kbusDeviceId, kbus->taskId);
-	adi->WriteBytes(kbus->kbusDeviceId, kbus->taskId, (controller.modules[iMod].bitOffsetOut), 24, (uint8_t *)  &outdata);
-	adi->WriteEnd(kbus->kbusDeviceId, kbus->taskId);
+	kbus_write_pmm(iMod, outdata);
 	
 }
 
@@ -297,10 +329,10 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 				aiMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
 				break;
 			case spm:
-				/*if ((controller.modules[i_modules].pn == 494) || (controller.modules[i_modules].pn == 495))
+				if ((controller.modules[i_modules].pn == 494) || (controller.modules[i_modules].pn == 495))
 				{
-					kbus_read_digital(i_modules, i_channels, kbus);
-				}*/
+					kbus_read_pmm(i_modules, &kbus, &pmMod[controller.modules[i_modules].typeIndex]);
+				}
 				break;
 			}
 		}
@@ -308,38 +340,22 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 	return 0;
 }
 
-int kbus_write_digital(int modulePosition, int channelPosition, bool channelValue) {
-	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
-	adi->WriteBool(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut + channelPosition), channelValue);
-	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
-}
-
-int kbus_write_analog(int modulePosition, int channelPosition, uint16_t channelValue) {
-	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
-	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, (kbus.terminalDescription[modulePosition].OffsetInput_bits + channelPosition), 2, (uint16_t *)  &channelValue);
-	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
-}
-
 int kbus_write(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue) 
 {
-	
-	if (strcmp(controller.modules[modulePosition].type, "DO") != 0)
+	switch (controller.modules[modulePosition].mtype)
 	{
-		if (strcmp(controller.modules[modulePosition].type, "AO") != 0)
-		{
-			log_error("module is not an output or is not supported");
-		}
-		else {
-			kbus_write_analog(modulePosition, channelPosition, channelValue);
-			build_event_object(mosq, modulePosition, channelPosition, channelValue);
-		}
-	}
-	else {
-		bool writeVal = false;
+	bool writeVal = false;
+	case dxm:
+	case dom:
 		if (channelValue != 0) {
 			writeVal = true;
 		}
 		kbus_write_digital(modulePosition, channelPosition, writeVal);
-		build_event_object(mosq, modulePosition, channelPosition, channelValue);
+		break;
+	case aom:
+		kbus_write_analog(modulePosition, channelPosition, channelValue);
+		break;
+	default:
+		break;
 	}
 }

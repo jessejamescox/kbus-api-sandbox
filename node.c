@@ -290,6 +290,7 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 						modules[i].inChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 						modules[i].outChannelCount = 0;
 						modules[i].bitOffsetIn = terminalDescription[i].OffsetInput_bits;
+						modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
 						log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
 			
 						// map to type index
@@ -315,8 +316,8 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].channelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
-					modules[i].bitOffsetOut = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 			
 					// map to type index
 					modules[i].typeIndex = aoIndex;
@@ -335,8 +336,8 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].channelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
-					modules[i].bitOffsetOut = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 			
 					// map to type index
 					modules[i].typeIndex = aoIndex;
@@ -354,8 +355,8 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].channelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
-					modules[i].bitOffsetOut = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 			
 					// map to type index
 					modules[i].typeIndex = aoIndex;
@@ -374,8 +375,8 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].channelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
-					modules[i].bitOffsetOut = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 			
 					// map to type index
 					modules[i].typeIndex = aoIndex;
@@ -395,8 +396,8 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].channelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
-					modules[i].bitOffsetOut = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 			
 					// map to type index
 					modules[i].typeIndex = aoIndex;
@@ -415,8 +416,8 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].channelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
-					modules[i].bitOffsetOut = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 			
 					// map to type index
 					modules[i].typeIndex = aoIndex;
@@ -434,8 +435,8 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].channelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = terminalDescription[i].AdditionalInfo.ChannelCount;
-					modules[i].bitOffsetOut = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 			
 					// map to type index
 					modules[i].typeIndex = aoIndex;
@@ -458,7 +459,7 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].outChannelCount = (terminalDescription[i].SizeOutput_bits);
 					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
 					modules[i].bitOffsetIn = terminalDescription[i].OffsetInput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					log_trace("Module %d is a %d channel %s at bit input offset %d, output offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn, modules[i].bitOffsetIn);
 				
 					// map to type index
 					modules[i].typeIndex = dxIndex;
@@ -474,7 +475,7 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 					modules[i].inChannelCount = 0;
 					modules[i].outChannelCount = (terminalDescription[i].SizeOutput_bits);
 					modules[i].bitOffsetOut = terminalDescription[i].OffsetOutput_bits;
-					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetIn);
+					log_trace("Module %d is a %d channel %s at bit offset %d", modules[i].position, modules[i].channelCount, modules[i].type, modules[i].bitOffsetOut);
 				
 					// map to type index
 					modules[i].typeIndex = doIndex;
