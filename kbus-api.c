@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
 	
 	int kbus_resp = 0;
 
-	// get the config
+
+	// get the config	
 	this_config = get_program_config();
 
 	controller.nodeId = this_config.node_id;

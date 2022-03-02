@@ -24,14 +24,23 @@
 #include "json.h"
 #include "get_config.h"
 
-#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
+#define CHK_BIT(var,pos) ((var) &   (1<<(pos)))
+#define SET_BIT(var,pos) ((var) |=  (1<<(pos)))
+#define CLR_BIT(var,pos) ((var) &= ~(1<<(pos)))
+#define FLP_BIT(var,pos) ((var) ^=  (1<<(pos)))
 
 struct node controllerLast;
 
 tApplicationDeviceInterface *adi;
 struct kbus kbus;
 
-//struct node controller;
+// holding arrays for IO modules
+struct pmMod pmMod[MAXPMMCOUNT];
+struct diMod diMod[MAXDIGCOUNT];
+struct doMod doMod[MAXDIGCOUNT];
+struct dxMod dxMod[MAXDIGCOUNT];
+struct aiMod aiMod[MAXALGCOUNT];
+struct aoMod aoMod[MAXALGCOUNT];
 
 bool initState = true;
 
@@ -131,6 +140,9 @@ int kbus_init(struct kbus *kbus) {
 	}
 }
 
+
+
+
 bool kbus_read_digital(int *i_modules, int *i_channels, struct kbus *kbus)
 {
 	int iMod =  i_modules;
@@ -144,10 +156,14 @@ bool kbus_read_digital(int *i_modules, int *i_channels, struct kbus *kbus)
 	return xOut;
 }
 
+
+
+
+
 int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 {
-	int iMod =  i_modules;
-	int iChan = i_channels;
+	uint8_t iMod =  i_modules;
+	uint8_t iChan = i_channels;
 	
 	int xOut;
 	// read inputs by channel		            
@@ -157,6 +173,86 @@ int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
 	return xOut;
 }
+
+
+void kbus_read_pmm(int *i_modules, int *i_channels, struct kbus *kbus, struct pmMod *pmm)
+{
+	uint8_t iMod = i_modules;
+	
+	// in and out buffers
+	uint8_t indata[24], outdata[24];
+	
+	// read 24 byte message from pmm pi            
+	int byteOffset = (controller.modules[iMod].bitOffsetIn / 8);
+	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 24, (uint8_t *) &indata);
+	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
+	
+	// getting the L1 data
+	if ((indata[4] == 4) |
+		(indata[5] == 1) | 
+		(indata[6] == 7) |
+		(indata[7] == 16))
+		{
+			// first map back the data 
+			pmm->L1.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
+			pmm->L1.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
+			pmm->L1.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
+			pmm->L1.frequency =	bytes_to_float(indata[20], indata[21], indata[22], indata[23]);
+			
+			outdata[1] = 1; // query L2
+			outdata[3] = 10; // get AC vals
+			outdata[4] = 5;
+			outdata[5] = 2;
+			outdata[6] = 8;
+			outdata[7] = 17;
+		}
+	
+	// getting the L2 data
+	if ((indata[4] == 5) |
+		(indata[5] == 2) | 
+		(indata[6] == 8) |
+		(indata[7] == 17))
+		{
+			pmm->L2.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
+			pmm->L2.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
+			pmm->L2.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
+			pmm->L2.frequency =	bytes_to_float(indata[20], indata[21], indata[22], indata[23]);
+			
+			outdata[1] = 2; // query L3
+			outdata[3] = 10; // get AC vals
+			outdata[4] = 6;
+			outdata[5] = 3;
+			outdata[6] = 9;
+			outdata[7] = 18;
+		}
+	
+	// getting the L3 data
+	if ((indata[4] == 6) |
+		(indata[5] == 3) | 
+		(indata[6] == 9) |
+		(indata[7] == 18))
+		{
+			pmm->L2.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
+			pmm->L2.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
+			pmm->L2.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
+			pmm->L2.frequency =	bytes_to_float(indata[20], indata[21], indata[22], indata[23]);
+			
+			outdata[1] = 0; // query L3
+			outdata[3] = 10; // get AC vals
+			outdata[4] = 4;
+			outdata[5] = 1;
+			outdata[6] = 7;
+			outdata[7] = 16;
+		}
+	
+	// now send the request
+	adi->WriteStart(kbus->kbusDeviceId, kbus->taskId);
+	adi->WriteBytes(kbus->kbusDeviceId, kbus->taskId, (controller.modules[iMod].bitOffsetOut), 24, (uint8_t *)  &outdata);
+	adi->WriteEnd(kbus->kbusDeviceId, kbus->taskId);
+	
+}
+
 
 int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kbus *kbus){//, struct node controller) {
 
@@ -189,27 +285,26 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 	for (i_modules = 0; i_modules < kbus->terminalCount; i_modules++) {
 		for (i_channels = 0; i_channels < controller.modules[i_modules].channelCount; i_channels++) {
 			
-			//int compRespDI = strcmp(controller.modules[i_modules].type, "DI");
-			//if (!compRespDI) {
-			if (!strcmp(controller.modules[i_modules].type, "DI") || (!strcmp(controller.modules[i_modules].type, "DX")))
+			switch (controller.modules[i_modules].mtype)
 			{
-				controller.modules[i_modules].channel[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+			case dim:
+				diMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+				break;
+			case dxm:
+				dxMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+				break;
+			case aim:
+				aiMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+				break;
+			case spm:
+				/*if ((controller.modules[i_modules].pn == 494) || (controller.modules[i_modules].pn == 495))
+				{
+					kbus_read_digital(i_modules, i_channels, kbus);
+				}*/
+				break;
 			}
-	
-			int compRespAI = strcmp(controller.modules[i_modules].type, "AI");
-			if (!compRespAI) 
-			{
-				controller.modules[i_modules].channel[i_channels].value = kbus_read_analog(i_modules, i_channels, kbus);
-			}
-//			if (controller.modules[i_modules].channel[i_channels].value != controllerLast.modules[i_modules].channel[i_channels].value) {
-//				if (!initState) 
-//				{
-//					build_event_object(mosq, controller, i_modules, i_channels, controller.modules[i_modules].channel[i_channels].value);
-//				}
-//				controllerLast.modules[i_modules].channel[i_channels].value = controller.modules[i_modules].channel[i_channels].value;
-//			}
-		} // for channels
-	} // for modules
+		}
+	}
 	return 0;
 }
 

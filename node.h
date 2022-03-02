@@ -7,6 +7,18 @@
 #include <ldkc_kbus_register_communication.h>
 #include "logger.h"
 #include "switch.h"
+
+
+enum mtype
+{
+	dim = 0,
+	dom = 1,
+	dxm = 2,
+	aim = 3,
+	aom = 4,
+	spm = 5
+};
+
 struct channel
 {
 	bool value;
@@ -33,6 +45,7 @@ struct dchannel
 struct	module 
 {
 	char *type;
+	enum mtype mtype;
 	char *desc;
 	uint8_t typeIndex;
 	int pn;
@@ -42,7 +55,7 @@ struct	module
 	uint8_t outChannelCount;
 	uint16_t bitOffsetIn;
 	uint16_t bitOffsetOut;
-	struct channel channel[16];
+	//struct channel channel[16];
 	
 };
 

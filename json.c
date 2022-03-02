@@ -34,40 +34,94 @@
 #define MAX_IMG_LENGTH 2048
 
 
+
 // helper functions
 struct json_object *dig_in_channel_object(int mp, int cp)
 {
 	struct json_object *jobj = json_object_new_object();
-	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)); 
-	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 	
-	
+	json_object_object_add(jobj, "value", json_object_new_boolean(diMod[controller.modules[mp].typeIndex].inData[cp].value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(diMod[controller.modules[mp].typeIndex].inData[cp].label)); 	
 	return jobj;
-}
+};
 
 struct json_object *dig_out_channel_object(int mp, int cp)
 {
 	struct json_object *jobj = json_object_new_object() ;
-	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)) ; 
-	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 	
+	json_object_object_add(jobj, "value", json_object_new_boolean(doMod[controller.modules[mp].typeIndex].outData[cp].value)) ; 
+	json_object_object_add(jobj, "label", json_object_new_string(doMod[controller.modules[mp].typeIndex].outData[cp].label)) ; 	
+	
+	return jobj ;
+}
+
+struct json_object *dx_in_channel_object(int mp, int cp)
+{
+	struct json_object *jobj = json_object_new_object();
+	json_object_object_add(jobj, "value", json_object_new_boolean(dxMod[controller.modules[mp].typeIndex].inData[cp].value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(dxMod[controller.modules[mp].typeIndex].inData[cp].label)); 	
+	return jobj;
+};
+
+struct json_object *dx_out_channel_object(int mp, int cp)
+{
+	struct json_object *jobj = json_object_new_object() ;
+	json_object_object_add(jobj, "value", json_object_new_boolean(dxMod[controller.modules[mp].typeIndex].outData[cp].value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(dxMod[controller.modules[mp].typeIndex].outData[cp].label)); 	
 	
 	return jobj ;
 }
 
 struct json_object *analog_in_channel_object(int mp, int cp)
 {	
-	struct json_object *jobj = json_object_new_object();
-	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)); 
-	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 
-	json_object_object_add(jobj, "deadband", json_object_new_int(controller.modules[mp].channel[cp].deadband)); 
-	return jobj;
+	struct json_object *jobj = json_object_new_object() ;
+	json_object_object_add(jobj, "value", json_object_new_boolean(aiMod[controller.modules[mp].typeIndex].inData[cp].value)) ; 
+	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label)) ; 
+	json_object_object_add(jobj, "deadband", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].deadband)) ; 
+	return jobj ;
 }
 
 struct json_object *analog_out_channel_object(int mp, int cp)
 {	
+	struct json_object *jobj = json_object_new_object() ;
+	json_object_object_add(jobj, "value", json_object_new_boolean(aiMod[controller.modules[mp].typeIndex].inData[cp].value)) ; 
+	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label)) ;
+	return jobj ;
+}
+
+struct json_object *in_data_breakout_object(int mp)
+{ 
 	struct json_object *jobj = json_object_new_object();
-	json_object_object_add(jobj, "value", json_object_new_boolean(controller.modules[mp].channel[cp].value)); 
-	json_object_object_add(jobj, "label", json_object_new_string(controller.modules[mp].channel[cp].label)); 
-	json_object_object_add(jobj, "deadband", json_object_new_int(controller.modules[mp].channel[cp].deadband)); 
+	
+	for (int channelIndex = 0; channelIndex < controller.modules[mp].outChannelCount; channelIndex++) 
+	{
+		char *chn = (char *) malloc(10 * sizeof(char)); 
+		strcpy(chn, "channel");
+		char *ch;
+		itoa((channelIndex + 1), &ch, 10);
+		strcat(chn, &ch);
+				
+		json_object_object_add(jobj, chn, dx_in_channel_object(mp, channelIndex));
+				
+		free(chn);
+	}
+	return jobj;
+}
+
+struct json_object *out_data_breakout_object(int mp)
+{ 
+	struct json_object *jobj = json_object_new_object();
+	
+	for (int channelIndex = 0; channelIndex < controller.modules[mp].outChannelCount; channelIndex++) 
+	{
+		char *chn = (char *) malloc(10 * sizeof(char)); 
+		strcpy(chn, "channel");
+		char *ch;
+		itoa((channelIndex + 1), &ch, 10);
+		strcat(chn, &ch);
+				
+		json_object_object_add(jobj, chn, dx_out_channel_object(mp, channelIndex));
+				
+		free(chn);
+	}
 	return jobj;
 }
 
@@ -75,44 +129,74 @@ struct json_object *simple_channels_object(int mp)
 {	
 	struct json_object *jobj = json_object_new_object();
 	
-	// add the channels
-	for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++) 
-	{
-		// build the channel object key
-
-		char *chn = (char *) malloc(10 * sizeof(char)); 
-		strcpy(chn, "channel");
-		char *ch;
-		itoa((channelIndex + 1), ch, 10);
-		
-		strcat(chn, ch);
-		
-		// check for digital in
-		if (!strcmp(controller.modules[mp].type, "DI"))
+		switch (controller.modules[mp].mtype)
 		{
-			json_object_object_add(jobj, chn, dig_in_channel_object(mp, channelIndex));
+		case dim: // digital inputs
+			for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++) 
+			{
+				char *chn = (char *) malloc(10 * sizeof(char)); 
+				strcpy(chn, "channel");
+				char *ch;
+				itoa((channelIndex + 1), ch, 10);
+				strcat(chn, ch);
+				
+				json_object_object_add(jobj, chn, dig_in_channel_object(mp, channelIndex));
+				
+				free(chn);
+			}
+			break;
+			
+		case dom:
+		
+			for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++) 
+			{
+				char *chn = (char *) malloc(10 * sizeof(char)); 
+				strcpy(chn, "channel");
+				char *ch;
+				itoa((channelIndex + 1), ch, 10);
+				strcat(chn, ch);
+				
+				json_object_object_add(jobj, chn, dig_out_channel_object(mp, channelIndex));
+				
+				free(chn);
+			}
+			break;
+		
+		case dxm:
+			json_object_object_add(jobj, "inputs", in_data_breakout_object(mp));
+			json_object_object_add(jobj, "outputs", out_data_breakout_object(mp));
+			break;
+			
+		case aim:
+			for (int channelIndex = 0; channelIndex < controller.modules[mp].inChannelCount; channelIndex++) 
+			{
+				char *chn = (char *) malloc(10 * sizeof(char)); 
+				strcpy(chn, "channel");
+				char *ch;
+				itoa((channelIndex + 1), ch, 10);
+				strcat(chn, ch);
+				
+				json_object_object_add(jobj, chn, analog_in_channel_object(mp, channelIndex));
+				
+				free(chn);
+			}
+			break;
+			
+		case aom:
+			for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++) 
+			{
+				char *chn = (char *) malloc(10 * sizeof(char)); 
+				strcpy(chn, "channel");
+				char *ch;
+				itoa((channelIndex + 1), &ch, 10);
+				strcat(chn, ch);
+				
+				json_object_object_add(jobj, chn, analog_out_channel_object(mp, channelIndex));
+				
+				free(chn);
+			}
+			break;
 		}
-		
-		// check for digital out
-		if (!strcmp(controller.modules[mp].type, "DO"))
-		{
-			json_object_object_add(jobj, chn, dig_out_channel_object(mp, channelIndex));
-		}
-		
-		// check for analog in
-		if (!strcmp(controller.modules[mp].type, "AI"))
-		{
-			json_object_object_add(jobj, chn, analog_in_channel_object(mp, channelIndex));
-		}	
-		
-		// check for analog out
-		if (!strcmp(controller.modules[mp].type, "AO"))
-		{
-			json_object_object_add(jobj, chn, analog_out_channel_object(mp, channelIndex));
-		}
-		
-		free(chn);
-	}
 	return jobj;
 };
 
@@ -337,19 +421,21 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 										if (json_object_object_get_ex(jsonHold2, "value", &jsonHold2))
 										{
 											
-											// get the channelk number
+											// get the channel number
 											channelCmd.value = json_object_get_int(jsonHold2);
-											
-											// write the kbus regs
-											kbus_write(mosq, controller, channelCmd.module, channelCmd.channel, channelCmd.value);		
-											
-											jh2Free = json_object_put(jsonHold2);
-											//printf("jh2Free: %d\n", jh2Free);
-											jh2Free = json_object_put(jsonHold2);
-											//printf("jh2Free: %d\n", jh2Free);
-											break;
-											
+											kbus_write(mosq, controller, channelCmd.module, channelCmd.channel, channelCmd.value);
+																				
 										}
+										if (json_object_object_get_ex(jsonHold2, "label", &jsonHold2))
+										{
+											
+											// ********** TODO ***************
+											
+																				
+										}
+										
+										jh2Free = json_object_put(jsonHold2);	
+										break;
 									}
 								}
 							}

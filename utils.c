@@ -91,3 +91,11 @@ float bytes_to_float(__uint8_t hsb, __uint8_t hmsb, __uint8_t lmsb, __uint8_t ls
 	memcpy(&f, &b, sizeof(f));
 	return f;
 }
+
+char *return_default_labe(int mp, char * dir, int cp)
+{
+	char *out;
+	asprintf(&out, "m%i%s%i", (mp + 1),dir, (cp + 1));
+	return out;
+}
+
