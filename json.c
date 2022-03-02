@@ -412,7 +412,7 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 									// find the object 
 									if (json_object_object_get_ex(jsonChannels, chn, &jsonChannel))
 									{
-										printf("got here\n");
+
 										// found the channel, record the module position
 										channelCmd.channel = iChannels;
 										
@@ -428,7 +428,6 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 										{
 											
 											// ********** TODO ***************
-											
 																				
 										}	
 										break;

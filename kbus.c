@@ -159,12 +159,15 @@ int kbus_write_analog(int modulePosition, int channelPosition, uint16_t channelV
 	aoMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
 }
 
-int kbus_write_pmm(int modulePosition, uint8_t outdata[24])
-{
+int kbus_write_pmm(int modulePosition, uint8_t outdata[8])
+{	
+	//uint8_t *outHold = &outdata; 
+	int byteOffset = (controller.modules[modulePosition].bitOffsetOut / 8);
 	// now send the request
 	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
-	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut), 24, (uint8_t *)  &outdata);
+	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, byteOffset, 8, (uint8_t *)  &outdata[0]);
 	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);
+	return 0;
 }
 
 
@@ -199,34 +202,49 @@ int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 	return xOut;
 }
 
+uint8_t *kbus_read_bytes(int *i_modules, struct kbus *kbus, uint8_t indata[24])
+{
+	uint8_t iMod =  i_modules;
+	
+	// read inputs by channel		            
+	int byteOffset = ((controller.modules[iMod].bitOffsetIn / 8));
+	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 24, (uint8_t *) &indata[0]);
+	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
+}
+
 
 void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 {
 	uint8_t iMod = i_modules;
+	uint8_t iTi = controller.modules[iMod].typeIndex;
 	
-	// in and out buffers
-	uint8_t indata[24], outdata[24];
+	uint8_t indata[24] = { 0 };// = { 0 };// = (uint8_t *) malloc(24);
+	uint8_t outdata[8] = { 0 };// = (uint8_t *) malloc(24);
 	
 	// read 24 byte message from pmm pi            
 	int byteOffset = (controller.modules[iMod].bitOffsetIn / 8);
 	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
-	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 24, (uint8_t *) &indata);
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 24, (uint8_t *) &indata[0]);
 	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
 	
+	outdata[0] = 0;
+	outdata[2] = NULL;
+	outdata[3] = 10;
+	
 	// getting the L1 data
-	if ((indata[4] == 4) |
-		(indata[5] == 1) | 
-		(indata[6] == 7) |
+	if ((indata[4] == 4) &
+		(indata[5] == 1) & 
+		(indata[6] == 7) &
 		(indata[7] == 16))
 	{
-			// first map back the data 
-			pmm->L1.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
-			pmm->L1.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
-			pmm->L1.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
-			pmm->L1.frequency =	bytes_to_float(indata[20], indata[21], indata[22], indata[23]);
+		// first map back the data 
+		pmMod[iTi].L1.volts = (float)(indata[8]);
+		pmMod[iTi].L1.ampres = (float)(indata[12]);
+		pmMod[iTi].L1.power = (float)(indata[16]);
+		pmMod[iTi].L1.frequency = (float)(indata[28]);
 			
 			outdata[1] = 1; // query L2
-			outdata[3] = 10; // get AC vals
 			outdata[4] = 5;
 			outdata[5] = 2;
 			outdata[6] = 8;
@@ -234,18 +252,13 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 	}
 	
 	// getting the L2 data
-	else if ((indata[4] == 5) |
-		(indata[5] == 2) | 
-		(indata[6] == 8) |
+	else if ((indata[4] == 5) &
+		(indata[5] == 2) &
+		(indata[6] == 8) &
 		(indata[7] == 17))
 	{
-			pmm->L2.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
-			pmm->L2.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
-			pmm->L2.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
-			pmm->L2.frequency =	bytes_to_float(indata[20], indata[21], indata[22], indata[23]);
 			
 			outdata[1] = 2; // query L3
-			outdata[3] = 10; // get AC vals
 			outdata[4] = 6;
 			outdata[5] = 3;
 			outdata[6] = 9;
@@ -253,15 +266,11 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 	}
 	
 	// getting the L3 data
-	else if ((indata[4] == 6) |
-		(indata[5] == 3) | 
-		(indata[6] == 9) |
+	else if ((indata[4] == 6) &
+		(indata[5] == 3) &
+		(indata[6] == 9) &
 		(indata[7] == 18))
 	{
-			pmm->L2.volts =		bytes_to_float(indata[8], indata[9], indata[10], indata[11]);
-			pmm->L2.ampres =	bytes_to_float(indata[12], indata[13], indata[14], indata[15]);
-			pmm->L2.power =		bytes_to_float(indata[16], indata[17], indata[18], indata[19]);
-			pmm->L2.frequency =	bytes_to_float(indata[20], indata[21], indata[22], indata[23]);
 			
 			outdata[1] = 0; // query L3
 			outdata[3] = 10; // get AC vals
@@ -331,7 +340,7 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 			case spm:
 				if ((controller.modules[i_modules].pn == 494) || (controller.modules[i_modules].pn == 495))
 				{
-					kbus_read_pmm(i_modules, &kbus, &pmMod[controller.modules[i_modules].typeIndex]);
+					kbus_read_pmm(i_modules, kbus, &pmMod[controller.modules[i_modules].typeIndex]);
 				}
 				break;
 			}

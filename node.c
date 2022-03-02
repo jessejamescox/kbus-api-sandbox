@@ -26,7 +26,12 @@
 int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalDescription[LDKC_KBUS_TERMINAL_COUNT_MAX], u16 terminals[LDKC_KBUS_TERMINAL_COUNT_MAX], struct module modules[LDKC_KBUS_TERMINAL_COUNT_MAX]) {
 	
 	// index vars for assigning the array positions
-	uint8_t aiIndex, pmIndex, aoIndex, diIndex, doIndex, dxIndex = 0;
+	uint8_t aiIndex = 0;
+	uint8_t pmIndex = 0;
+	uint8_t aoIndex = 0;
+	uint8_t diIndex = 0;
+	uint8_t doIndex = 0;
+	uint8_t dxIndex = 0;
 
 	terminals;
 	// cycle through the modules and read the values
