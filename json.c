@@ -94,10 +94,10 @@ struct json_object *pmm_module_object(int mp)
 	struct json_object *jsL2 = json_object_new_object() ;
 	struct json_object *jsL3 = json_object_new_object() ;
 	
-	json_object_object_add(jsL1, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredVolts / 100)) ;
-	json_object_object_add(jsL1, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredAmps / 10000));
-	json_object_object_add(jsL1, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredPower / 100));
-	json_object_object_add(jsL1, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency / 1000));
+	json_object_object_add(jsL1, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredVolts * 0.01)) ;
+	json_object_object_add(jsL1, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredAmps * 0.0001));
+	json_object_object_add(jsL1, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredPower * 0.01));
+	json_object_object_add(jsL1, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency * 0.001));
 	
 	json_object_object_add(jsL1, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorUnderVolts)) ;
 	json_object_object_add(jsL1, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorOverVolts)) ;
@@ -109,10 +109,10 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL1, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorZeroCross)) ;
 	
 
-	json_object_object_add(jsL2, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredVolts / 100));
-	json_object_object_add(jsL2, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredAmps / 10000));
-	json_object_object_add(jsL2, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredPower / 100));
-	json_object_object_add(jsL2, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency / 1000));
+	json_object_object_add(jsL2, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredVolts * 0.01));
+	json_object_object_add(jsL2, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredAmps * 0.0001));
+	json_object_object_add(jsL2, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredPower * 0.01));
+	json_object_object_add(jsL2, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency * 0.001));
 	
 	json_object_object_add(jsL2, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorUnderVolts)) ;
 	json_object_object_add(jsL2, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorOverVolts)) ;
@@ -123,10 +123,10 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL2, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorGeneral)) ;
 	json_object_object_add(jsL2, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorZeroCross)) ;
 	
-	json_object_object_add(jsL3, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredVolts / 100));
-	json_object_object_add(jsL3, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredAmps / 10000));
-	json_object_object_add(jsL3, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredPower / 100));
-	json_object_object_add(jsL3, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency / 1000));
+	json_object_object_add(jsL3, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredVolts * 0.01));
+	json_object_object_add(jsL3, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredAmps * 0.0001));
+	json_object_object_add(jsL3, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredPower * 0.01));
+	json_object_object_add(jsL3, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency * 0.001));
 	
 	json_object_object_add(jsL3, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorUnderVolts)) ;
 	json_object_object_add(jsL3, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorOverVolts)) ;
@@ -137,15 +137,15 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL3, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorGeneral)) ;
 	json_object_object_add(jsL3, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorZeroCross)) ;
 	
-	json_object_object_add(jobj, "L1", jsL1) ;
-	json_object_object_add(jobj, "L2", jsL3) ;
-	json_object_object_add(jobj, "L3", jsL1) ;
-	json_object_object_add(jobj, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].genError));
+	json_object_object_add(jobj, "L1", json_object_get(jsL1)) ;
+	json_object_object_add(jobj, "L2", json_object_get(jsL2));
+	json_object_object_add(jobj, "L3", json_object_get(jsL3));
+	json_object_object_add(jobj, "errorGroup", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].grpError));
 	json_object_object_add(jobj, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].genError));
 	
-	//json_object_put(jsL1);
-	//json_object_put(jsL2);
-	//json_object_put(jsL3);
+	json_object_put(jsL1);
+	json_object_put(jsL2);
+	json_object_put(jsL3);
 	
 	return jobj;
 }
@@ -446,7 +446,9 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	
 	int pjFree, jhFree, jh2Free;
 	
-	char *mod, *chn;
+	//char *mod, *chn;
+	char *mod = (char*)malloc(10 * sizeof(char));
+	char *chn = (char*)malloc(10 * sizeof(char));
 
 	// get the main json object
 	struct json_object *parsed_json		= json_tokener_parse(message);
@@ -479,7 +481,7 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 								// search for the channels
 								for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
 								{
-									chn = (char*)malloc(10 * sizeof(char));
+									//chn = (char*)malloc(10 * sizeof(char));
 
 									strcpy(chn, "channel");
 									char *ch;
@@ -501,7 +503,7 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 											kbus_write(mosq, controller, channelCmd.module, channelCmd.channel, channelCmd.value);
 																				
 										}
-										if (json_object_object_get_ex(jsonChannel, "label", &jsonValue))
+										if (json_object_object_get_ex(jsonChannel, "label", &jsonLabel))
 										{
 											
 											// ********** TODO ***************
@@ -509,11 +511,9 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 										}	
 										break;
 									}
-									free(chn);
 								}
 							}
 						}
-						free(mod);
 					}
 				}
 			}
@@ -521,7 +521,28 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	}
 
 	// free the owners	
-	pjFree = json_object_put(parsed_json);
+	free(chn);
+	free(mod);
+	while (json_object_put(jsonLabel)) {};
+	while (json_object_put(jsonValue)) {};
+	while (json_object_put(jsonChannel)) {};
+	while (json_object_put(jsonChannels)) {};
+	while (json_object_put(jsonModule)) {};
+	while (json_object_put(jsonModules)) {};
+	while (json_object_put(jsonController)) {};
+	while (json_object_put(jsonDesired)) {};
+	while (json_object_put(jsonState)) {};
+	while (json_object_put(parsed_json)) {};
+	/*json_object_put(jsonLabel);
+	json_object_put(jsonValue);
+	json_object_put(jsonChannel);
+	json_object_put(jsonChannels);
+	json_object_put(jsonModule);
+	json_object_put(jsonModules);
+	json_object_put(jsonController);
+	json_object_put(jsonDesired);
+	json_object_put(jsonState);
+	json_object_put(parsed_json);*/
 	
 	//return error
 	return 0;

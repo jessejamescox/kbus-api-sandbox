@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
 
 	// get the config	
 	this_config = get_program_config();
+	
+	uint32_t sleepVal = (this_config.publish_cycle - 30) * 1000;
 
 	controller.nodeId = this_config.node_id;
 	
@@ -99,7 +101,6 @@ int main(int argc, char *argv[])
 
 				// decrement the lib ref
 				mosquitto_lib_cleanup();
-
 				// reset the init
 				initialized = 0;
 			}
@@ -135,7 +136,7 @@ int main(int argc, char *argv[])
 						char *kbus_error_string = build_error_object(true, controller, this_config, "kbus error present");
 						mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(kbus_error_string), kbus_error_string, 0, 0);
 					}	
-					usleep(10000);
+					usleep(sleepVal);
 				}
 			}
 			//else
