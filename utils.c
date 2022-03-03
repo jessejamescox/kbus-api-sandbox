@@ -80,6 +80,7 @@ char* itoa(int value, char* buffer, int base)
 	return reverse(buffer, 0, i - 1);
 }
 
+/*
 float bytes_to_float(__uint8_t hsb, __uint8_t hmsb, __uint8_t lmsb, __uint8_t lsb)
 {
 	float f;
@@ -91,7 +92,7 @@ float bytes_to_float(__uint8_t hsb, __uint8_t hmsb, __uint8_t lmsb, __uint8_t ls
 	//float f = *(float *)&b;
 	memcpy(&f, b, sizeof(f));
 	return f;
-}
+}*/
 
 char *return_default_labe(int mp, char * dir, int cp)
 {

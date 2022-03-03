@@ -16,6 +16,7 @@
 #include <dal/adi_application_interface.h>
 #include <ldkc_kbus_information.h>
 #include <ldkc_kbus_register_communication.h>
+#include <math.h>
 
 #include "kbus.h"
 #include "kbus-api.h"
@@ -23,6 +24,20 @@
 #include "logger.h"
 #include "json.h"
 #include "get_config.h"
+
+typedef union {
+	float f;
+	unsigned int h;
+} hexfloat;
+
+float bytes_to_float(unsigned int in)
+{
+	hexfloat hf;
+	hf.h = in;
+	float f = hf.f;
+	printf("%f\n", f);
+	return f;
+}
 
 #define CHK_BIT(var,pos) ((var) &   (1<<(pos)))
 #define SET_BIT(var,pos) ((var) |=  (1<<(pos)))
@@ -43,6 +58,7 @@ struct aiMod aiMod[MAXALGCOUNT];
 struct aoMod aoMod[MAXALGCOUNT];
 
 bool initState = true;
+
 
 int kbus_init(struct kbus *kbus) {
 	//, tApplicationDeviceInterface *adi) {
@@ -219,8 +235,8 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 	uint8_t iMod = i_modules;
 	uint8_t iTi = controller.modules[iMod].typeIndex;
 	
-	uint8_t indata[24] = { 0 };// = { 0 };// = (uint8_t *) malloc(24);
-	uint8_t outdata[8] = { 0 };// = (uint8_t *) malloc(24);
+	uint8_t indata[24] = { 0 }; // = { 0 };// = (uint8_t *) malloc(24);
+	uint8_t outdata[8] = { 0 }; // = (uint8_t *) malloc(24);
 	
 	// read 24 byte message from pmm pi            
 	int byteOffset = (controller.modules[iMod].bitOffsetIn / 8);
@@ -238,17 +254,16 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 		(indata[6] == 7) &
 		(indata[7] == 16))
 	{
-		// first map back the data 
-		pmMod[iTi].L1.volts = (float)(indata[8]);
-		pmMod[iTi].L1.ampres = (float)(indata[12]);
-		pmMod[iTi].L1.power = (float)(indata[16]);
-		pmMod[iTi].L1.frequency = (float)(indata[28]);
+		unsigned int myint;
+		memcpy(&myint, &indata[8], 5);
+		float floatVal = myint;
+		printf("L1VOLTS: %.2f\n", (floatVal / 100));
 			
 			outdata[1] = 1; // query L2
-			outdata[4] = 5;
-			outdata[5] = 2;
-			outdata[6] = 8;
-			outdata[7] = 17;
+			outdata[4] = 4;
+			outdata[5] = 1;
+			outdata[6] = 7;
+			outdata[7] = 16;
 	}
 	
 	// getting the L2 data
