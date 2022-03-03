@@ -235,77 +235,122 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 	uint8_t iMod = i_modules;
 	uint8_t iTi = controller.modules[iMod].typeIndex;
 	
-	uint8_t indata[24] = { 0 }; // = { 0 };// = (uint8_t *) malloc(24);
-	uint8_t outdata[8] = { 0 }; // = (uint8_t *) malloc(24);
+	uint8_t statusBytes[8] = { 0 }; // = { 0 };// = (uint8_t *) malloc(24);
+	uint32_t dataRegs[4] = { 0 };
+	
+	uint8_t controlBytes[8] = { 0 }; // = (uint8_t *) malloc(24);
 	
 	// read 24 byte message from pmm pi            
 	int byteOffset = (controller.modules[iMod].bitOffsetIn / 8);
 	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
-	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 24, (uint8_t *) &indata[0]);
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 8, (uint8_t *) &statusBytes[0]);
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, (byteOffset + 8), 16, (uint32_t *) &dataRegs[0]);
 	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
 	
-	outdata[0] = 0;
-	outdata[2] = NULL;
-	outdata[3] = 10;
+	controlBytes[0] = 0;
+	controlBytes[2] = NULL;
+	controlBytes[3] = 10;
 	
 	// getting the L1 data
-	if ((indata[4] == 4) &
-		(indata[5] == 1) & 
-		(indata[6] == 7) &
-		(indata[7] == 16))
+	if ((statusBytes[4] == 4) &
+		(statusBytes[5] == 1) & 
+		(statusBytes[6] == 7) &
+		(statusBytes[7] == 16))
 	{
-		unsigned int myint;
-		memcpy(&myint, &indata[8], 5);
-		float floatVal = myint;
-		printf("L1VOLTS: %.2f\n", (floatVal / 100));
+		
+		pmMod[iTi].L1.measuredVolts		= dataRegs[0];
+		pmMod[iTi].L1.measuredAmps		= dataRegs[1];
+		pmMod[iTi].L1.measuredPower		= dataRegs[2];
+		pmMod[iTi].L1.measuredFrequency = dataRegs[3];
+		
+		pmMod[iTi].L1.errorUnderVolts		= CHK_BIT(statusBytes[2], 1);
+		pmMod[iTi].L1.errorCurrentRange		= CHK_BIT(statusBytes[2], 2);
+		pmMod[iTi].L1.errorVoltsRange		= CHK_BIT(statusBytes[2], 3);
+		pmMod[iTi].L1.errorZeroCross		= CHK_BIT(statusBytes[2], 4);
+		pmMod[iTi].L1.errorOverCurrent		= CHK_BIT(statusBytes[2], 5);
+		pmMod[iTi].L1.errorFieldCCW			= CHK_BIT(statusBytes[2], 6);
+		pmMod[iTi].L1.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
 			
-			outdata[1] = 1; // query L2
-			outdata[4] = 4;
-			outdata[5] = 1;
-			outdata[6] = 7;
-			outdata[7] = 16;
+		controlBytes[1] = 1; // query L2
+		controlBytes[4] = 5;
+		controlBytes[5] = 2;
+		controlBytes[6] = 8;
+		controlBytes[7] = 17;
 	}
 	
 	// getting the L2 data
-	else if ((indata[4] == 5) &
-		(indata[5] == 2) &
-		(indata[6] == 8) &
-		(indata[7] == 17))
+	else if((statusBytes[4] == 5) &
+		(statusBytes[5] == 2) &
+		(statusBytes[6] == 8) &
+		(statusBytes[7] == 17))
 	{
+		pmMod[iTi].L2.measuredVolts		= dataRegs[0];
+		pmMod[iTi].L2.measuredAmps		= dataRegs[1];
+		pmMod[iTi].L2.measuredPower		= dataRegs[2];
+		pmMod[iTi].L2.measuredFrequency = dataRegs[3];
+		
+		pmMod[iTi].L2.errorUnderVolts		= CHK_BIT(statusBytes[2], 1);
+		pmMod[iTi].L2.errorCurrentRange		= CHK_BIT(statusBytes[2], 2);
+		pmMod[iTi].L2.errorVoltsRange		= CHK_BIT(statusBytes[2], 3);
+		pmMod[iTi].L2.errorZeroCross		= CHK_BIT(statusBytes[2], 4);
+		pmMod[iTi].L2.errorOverCurrent		= CHK_BIT(statusBytes[2], 5);
+		pmMod[iTi].L2.errorFieldCCW			= CHK_BIT(statusBytes[2], 6);
+		pmMod[iTi].L2.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
 			
-			outdata[1] = 2; // query L3
-			outdata[4] = 6;
-			outdata[5] = 3;
-			outdata[6] = 9;
-			outdata[7] = 18;
+		controlBytes[1] = 2; // query L3
+		controlBytes[4] = 6;
+		controlBytes[5] = 3;
+		controlBytes[6] = 9;
+		controlBytes[7] = 18;
 	}
 	
 	// getting the L3 data
-	else if ((indata[4] == 6) &
-		(indata[5] == 3) &
-		(indata[6] == 9) &
-		(indata[7] == 18))
+	else if((statusBytes[4] == 6) &
+		(statusBytes[5] == 3) &
+		(statusBytes[6] == 9) &
+		(statusBytes[7] == 18))
 	{
+		pmMod[iTi].L3.measuredVolts		= dataRegs[0];
+		pmMod[iTi].L3.measuredAmps		= dataRegs[1];
+		pmMod[iTi].L3.measuredPower		= dataRegs[2];
+		pmMod[iTi].L3.measuredFrequency = dataRegs[3];
+		
+		pmMod[iTi].L3.errorUnderVolts		= CHK_BIT(statusBytes[2], 1);
+		pmMod[iTi].L3.errorCurrentRange		= CHK_BIT(statusBytes[2], 2);
+		pmMod[iTi].L3.errorVoltsRange		= CHK_BIT(statusBytes[2], 3);
+		pmMod[iTi].L3.errorZeroCross		= CHK_BIT(statusBytes[2], 4);
+		pmMod[iTi].L3.errorOverCurrent		= CHK_BIT(statusBytes[2], 5);
+		pmMod[iTi].L3.errorFieldCCW			= CHK_BIT(statusBytes[2], 6);
+		pmMod[iTi].L3.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
 			
-			outdata[1] = 0; // query L3
-			outdata[3] = 10; // get AC vals
-			outdata[4] = 4;
-			outdata[5] = 1;
-			outdata[6] = 7;
-			outdata[7] = 16;
+		controlBytes[1] = 0; // query L3
+		controlBytes[3] = 10; // get AC vals
+		controlBytes[4] = 4;
+		controlBytes[5] = 1;
+		controlBytes[6] = 7;
+		controlBytes[7] = 16;
 	}
 	else
 	{
-		outdata[1] = 0; // query L3
-		outdata[3] = 10; // get AC vals
-		outdata[4] = 4;
-		outdata[5] = 1;
-		outdata[6] = 7;
-		outdata[7] = 16;
+		controlBytes[1] = 0; // query L3
+		controlBytes[3] = 10; // get AC vals
+		controlBytes[4] = 4;
+		controlBytes[5] = 1;
+		controlBytes[6] = 7;
+		controlBytes[7] = 16;
 	}
 	
+	// errors
+	pmMod[iTi].L1.errorGeneral = CHK_BIT(statusBytes[0], 0);
+	pmMod[iTi].L2.errorGeneral = CHK_BIT(statusBytes[0], 1);
+	pmMod[iTi].L3.errorGeneral = CHK_BIT(statusBytes[0], 2);	
+	
+	pmMod[iTi].grpError = CHK_BIT(statusBytes[0], 3);
+	pmMod[iTi].genError = CHK_BIT(statusBytes[0], 6);
+	
+	
 	// now send the request
-	kbus_write_pmm(iMod, outdata);
+	kbus_write_pmm(iMod, controlBytes);
 	
 }
 

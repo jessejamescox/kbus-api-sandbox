@@ -68,14 +68,14 @@ struct json_object *dx_out_channel_object(int mp, int cp)
 	json_object_object_add(jobj, "label", json_object_new_string(dxMod[controller.modules[mp].typeIndex].outData[cp].label)); 	
 	
 	return jobj ;
-}
+};
 
 struct json_object *analog_in_channel_object(int mp, int cp)
 {	
 	struct json_object *jobj = json_object_new_object() ;
-	json_object_object_add(jobj, "value", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].value)) ; 
-	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label)) ; 
-	json_object_object_add(jobj, "deadband", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].deadband)) ; 
+	json_object_object_add(jobj, "value", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].value)); 
+	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label)); 
+	json_object_object_add(jobj, "deadband", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].deadband)); 
 	return jobj ;
 }
 
@@ -83,8 +83,71 @@ struct json_object *analog_out_channel_object(int mp, int cp)
 {	
 	struct json_object *jobj = json_object_new_object() ;
 	json_object_object_add(jobj, "value", json_object_new_int(aoMod[controller.modules[mp].typeIndex].outData[cp].value)) ; 
-	json_object_object_add(jobj, "label", json_object_new_string(aoMod[controller.modules[mp].typeIndex].outData[cp].label));
+	json_object_object_add(jobj, "label", json_object_new_string(aoMod[controller.modules[mp].typeIndex].outData[cp].label)) ;
 	return jobj ;
+}
+
+struct json_object *pmm_module_object(int mp)
+{ 
+	struct json_object *jobj = json_object_new_object() ;
+	struct json_object *jsL1 = json_object_new_object() ;
+	struct json_object *jsL2 = json_object_new_object() ;
+	struct json_object *jsL3 = json_object_new_object() ;
+	
+	json_object_object_add(jsL1, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredVolts / 100)) ;
+	json_object_object_add(jsL1, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredAmps / 10000));
+	json_object_object_add(jsL1, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredPower / 100));
+	json_object_object_add(jsL1, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency / 1000));
+	
+	json_object_object_add(jsL1, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorUnderVolts)) ;
+	json_object_object_add(jsL1, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorOverVolts)) ;
+	json_object_object_add(jsL1, "errorCurrentRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorCurrentRange)) ;
+	json_object_object_add(jsL1, "errorOverCurrent", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorOverCurrent)) ;
+	json_object_object_add(jsL1, "errorVoltsRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorVoltsRange)) ;
+	json_object_object_add(jsL1, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorFieldCCW)) ;
+	json_object_object_add(jsL1, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorGeneral)) ;
+	json_object_object_add(jsL1, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorZeroCross)) ;
+	
+
+	json_object_object_add(jsL2, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredVolts / 100));
+	json_object_object_add(jsL2, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredAmps / 10000));
+	json_object_object_add(jsL2, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredPower / 100));
+	json_object_object_add(jsL2, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency / 1000));
+	
+	json_object_object_add(jsL2, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorUnderVolts)) ;
+	json_object_object_add(jsL2, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorOverVolts)) ;
+	json_object_object_add(jsL2, "errorCurrentRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorCurrentRange)) ;
+	json_object_object_add(jsL2, "errorOverCurrent", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorOverCurrent)) ;
+	json_object_object_add(jsL2, "errorVoltsRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorVoltsRange)) ;
+	json_object_object_add(jsL2, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorFieldCCW)) ;
+	json_object_object_add(jsL2, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorGeneral)) ;
+	json_object_object_add(jsL2, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorZeroCross)) ;
+	
+	json_object_object_add(jsL3, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredVolts / 100));
+	json_object_object_add(jsL3, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredAmps / 10000));
+	json_object_object_add(jsL3, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredPower / 100));
+	json_object_object_add(jsL3, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency / 1000));
+	
+	json_object_object_add(jsL3, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorUnderVolts)) ;
+	json_object_object_add(jsL3, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorOverVolts)) ;
+	json_object_object_add(jsL3, "errorCurrentRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorCurrentRange)) ;
+	json_object_object_add(jsL3, "errorOverCurrent", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorOverCurrent)) ;
+	json_object_object_add(jsL3, "errorVoltsRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorVoltsRange)) ;
+	json_object_object_add(jsL3, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorFieldCCW)) ;
+	json_object_object_add(jsL3, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorGeneral)) ;
+	json_object_object_add(jsL3, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorZeroCross)) ;
+	
+	json_object_object_add(jobj, "L1", jsL1) ;
+	json_object_object_add(jobj, "L2", jsL3) ;
+	json_object_object_add(jobj, "L3", jsL1) ;
+	json_object_object_add(jobj, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].genError));
+	json_object_object_add(jobj, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].genError));
+	
+	//json_object_put(jsL1);
+	//json_object_put(jsL2);
+	//json_object_put(jsL3);
+	
+	return jobj;
 }
 
 struct json_object *in_data_breakout_object(int mp)
@@ -208,11 +271,25 @@ struct json_object *simple_module_object(int mp)
 	json_object_object_add(jobj, "pn", json_object_new_int(controller.modules[mp].pn));
 	json_object_object_add(jobj, "position", json_object_new_int(controller.modules[mp].position));
 	json_object_object_add(jobj, "type", json_object_new_string(controller.modules[mp].type));
-	json_object_object_add(jobj, "input_channel_count", json_object_new_int(controller.modules[mp].inChannelCount));
-	json_object_object_add(jobj, "output_channel_count", json_object_new_int(controller.modules[mp].outChannelCount));
 	
-	// add the channel info
-	json_object_object_add(jobj, "channels", simple_channels_object(mp));
+	if (controller.modules[mp].mtype == spm)
+	{
+		switch (controller.modules[mp].pn)
+		{
+		case 494 ... 495: // check for power measurement module
+			json_object_object_add(jobj, "data", pmm_module_object(mp));
+			break;
+		}
+	}
+	else // somple modules
+	{
+		json_object_object_add(jobj, "input_channel_count", json_object_new_int(controller.modules[mp].inChannelCount));
+		json_object_object_add(jobj, "output_channel_count", json_object_new_int(controller.modules[mp].outChannelCount));
+	
+		// add the channel info
+		json_object_object_add(jobj, "channels", simple_channels_object(mp));
+		
+	}
 	
 	return jobj;
 }

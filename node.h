@@ -98,11 +98,19 @@ struct aoMod
 //sub structure for PMM
 struct lX
 {
-	float volts;
-	float ampres;
-	float power;
-	float frequency;
-	bool error;
+	double measuredVolts;
+	double measuredAmps;
+	double measuredPower;
+	double measuredFrequency;
+	bool errorGeneral;
+	
+	bool errorUnderVolts;
+	bool errorOverVolts;
+	bool errorCurrentRange;
+	bool errorVoltsRange;
+	bool errorZeroCross;
+	bool errorFieldCCW;
+	bool errorOverCurrent;
 };
 
 // main structure for PMM 
