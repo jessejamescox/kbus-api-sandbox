@@ -99,14 +99,15 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL1, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredPower * 0.01));
 	json_object_object_add(jsL1, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency * 0.001));
 	
-	json_object_object_add(jsL1, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorUnderVolts)) ;
+	json_object_object_add(jsL1, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorGeneral));
+	
+	/*json_object_object_add(jsL1, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorUnderVolts)) ;
 	json_object_object_add(jsL1, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorOverVolts)) ;
 	json_object_object_add(jsL1, "errorCurrentRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorCurrentRange)) ;
 	json_object_object_add(jsL1, "errorOverCurrent", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorOverCurrent)) ;
 	json_object_object_add(jsL1, "errorVoltsRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorVoltsRange)) ;
 	json_object_object_add(jsL1, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorFieldCCW)) ;
-	json_object_object_add(jsL1, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorGeneral)) ;
-	json_object_object_add(jsL1, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorZeroCross)) ;
+	json_object_object_add(jsL1, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorZeroCross)) ;*/
 	
 
 	json_object_object_add(jsL2, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredVolts * 0.01));
@@ -114,28 +115,30 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL2, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredPower * 0.01));
 	json_object_object_add(jsL2, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency * 0.001));
 	
-	json_object_object_add(jsL2, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorUnderVolts)) ;
+	json_object_object_add(jsL2, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorGeneral));
+	
+	/*json_object_object_add(jsL2, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorUnderVolts)) ;
 	json_object_object_add(jsL2, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorOverVolts)) ;
 	json_object_object_add(jsL2, "errorCurrentRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorCurrentRange)) ;
 	json_object_object_add(jsL2, "errorOverCurrent", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorOverCurrent)) ;
 	json_object_object_add(jsL2, "errorVoltsRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorVoltsRange)) ;
 	json_object_object_add(jsL2, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorFieldCCW)) ;
-	json_object_object_add(jsL2, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorGeneral)) ;
-	json_object_object_add(jsL2, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorZeroCross)) ;
+	json_object_object_add(jsL2, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorZeroCross)) ;*/
 	
 	json_object_object_add(jsL3, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredVolts * 0.01));
 	json_object_object_add(jsL3, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredAmps * 0.0001));
 	json_object_object_add(jsL3, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredPower * 0.01));
 	json_object_object_add(jsL3, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency * 0.001));
 	
-	json_object_object_add(jsL3, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorUnderVolts)) ;
+	json_object_object_add(jsL3, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorGeneral));
+	
+	/*json_object_object_add(jsL3, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorUnderVolts)) ;
 	json_object_object_add(jsL3, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorOverVolts)) ;
 	json_object_object_add(jsL3, "errorCurrentRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorCurrentRange)) ;
 	json_object_object_add(jsL3, "errorOverCurrent", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorOverCurrent)) ;
 	json_object_object_add(jsL3, "errorVoltsRange", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorVoltsRange)) ;
 	json_object_object_add(jsL3, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorFieldCCW)) ;
-	json_object_object_add(jsL3, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorGeneral)) ;
-	json_object_object_add(jsL3, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorZeroCross)) ;
+	json_object_object_add(jsL3, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorZeroCross)) ;*/
 	
 	json_object_object_add(jobj, "L1", json_object_get(jsL1)) ;
 	json_object_object_add(jobj, "L2", json_object_get(jsL2));
