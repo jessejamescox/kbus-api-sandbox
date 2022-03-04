@@ -7,4 +7,8 @@
 
 extern char *return_default_labe(int mp, char * dir, int cp);
 
+extern uint32_t get_time_millis(void);
+
+extern unsigned long current_timestamp();
+
 #endif /*__UTILS_H__*/

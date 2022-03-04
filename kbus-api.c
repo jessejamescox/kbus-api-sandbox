@@ -41,10 +41,14 @@
 #include "get_config.h"
 #include "mqtt.h"
 #include "led.h"
+#include "utils.h"
+#include "logger.h"
 
 #define IS_RUNNING	0x01
 #define IS_STOPPED	0x02
 #define IS_ERROR	0x80
+
+#define LOGFILE "/etc/kbus-daemon/logs/runtime.log"
 
 struct node controller;
 
@@ -64,7 +68,7 @@ int main(int argc, char *argv[])
 	
 	int kbus_resp = 0;
 	
-	char *mosq_err;
+	unsigned long tik, tok;
 
 
 	// get the config	
@@ -77,7 +81,7 @@ int main(int argc, char *argv[])
 	set_led(IS_STOPPED);
 
 	while (1)
-	{
+	{	
 
 		controller.ss = get_switch_state();
 		controller.switch_state = map_switch_state(controller.ss);
@@ -120,8 +124,6 @@ int main(int argc, char *argv[])
 				controller.ss = get_switch_state();
 				
 				rc = mosquitto_loop(mosq, 5, 1);
-				mosq_err = mosquitto_strerror(rc);
-				printf("%s\n", mosq_err);
 				if (rc)
 				{
 					if (led)
@@ -133,19 +135,23 @@ int main(int argc, char *argv[])
 					printf("connection error!\n");
 					sleep(3);
 					mosquitto_reconnect(mosq);
+					tik = current_timestamp();
 				}
 				else
 				{
 					if (!led)
 					{
-						//set_led(IS_RUNNING);
+						set_led(IS_RUNNING);
 						led = 1;
-					}-
+					}
+					
+					tok = current_timestamp();
 					
 					// the main event
-					if (run)
+					if ((this_config.publish_cyclic) & (run) & (tok > (tik + this_config.publish_cycle)))
 					{
 						build_controller_object(mosq);
+						tik = current_timestamp();
 					}
 					else
 					{
@@ -212,6 +218,7 @@ int main(int argc, char *argv[])
 				build_controller_object(mosq);
 				initialized = 1;
 				//set_led(IS_RUNNING);
+			tik = current_timestamp();
 
 			//}
 			break;

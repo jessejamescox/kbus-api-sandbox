@@ -19,7 +19,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <string.h>
+#include <sys/time.h>
 
 // Function to swap two numbers
 void swap(char *x, char *y) {
@@ -100,4 +104,22 @@ char *return_default_labe(int mp, char * dir, int cp)
 	asprintf(&out, "m%i%s%i", (mp + 1),dir, (cp + 1));
 	return out;
 }
+
+uint32_t get_time_millis(void)
+{
+	uint32_t uiNow;
+	struct timeval tvNow;
+	gettimeofday(&tvNow, NULL);
+	uiNow = tvNow.tv_usec;
+	return uiNow;
+}
+
+unsigned long current_timestamp() {
+	struct timeval te; 
+	gettimeofday(&te, NULL); // get current time
+	long long milliseconds = te.tv_sec * 1000LL + te.tv_usec / 1000; // calculate milliseconds
+	// printf("milliseconds: %lld\n", milliseconds);
+	return milliseconds;
+}
+
 

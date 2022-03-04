@@ -539,7 +539,7 @@ int build_module_object(int terminalCount, tldkc_KbusInfo_TerminalInfo terminalD
 		case aim:
 			for (int y = 0; y < modules[i].channelCount; y++)
 			{
-				diMod[modules[i].typeIndex].inData[y].label = return_default_labe(i, "_input", y);
+				aiMod[modules[i].typeIndex].inData[y].label = return_default_labe(i, "_input", y);
 			}
 			break;
 		case aom:

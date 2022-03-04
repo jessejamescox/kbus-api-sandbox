@@ -94,10 +94,10 @@ struct json_object *pmm_module_object(int mp)
 	struct json_object *jsL2 = json_object_new_object() ;
 	struct json_object *jsL3 = json_object_new_object() ;
 	
-	json_object_object_add(jsL1, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredVolts * 0.01)) ;
-	json_object_object_add(jsL1, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredAmps * 0.0001));
-	json_object_object_add(jsL1, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredPower * 0.01));
-	json_object_object_add(jsL1, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency * 0.001));
+	json_object_object_add(jsL1, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredVolts * 0.01) * 100) / 100)) ;
+	json_object_object_add(jsL1, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredAmps * 0.0001) * 100) / 100));
+	json_object_object_add(jsL1, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredPower * 0.01) * 100) / 100));
+	json_object_object_add(jsL1, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency * 0.001) * 100) / 100));
 	
 	json_object_object_add(jsL1, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorGeneral));
 	
@@ -110,10 +110,10 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL1, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorZeroCross)) ;*/
 	
 
-	json_object_object_add(jsL2, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredVolts * 0.01));
-	json_object_object_add(jsL2, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredAmps * 0.0001));
-	json_object_object_add(jsL2, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredPower * 0.01));
-	json_object_object_add(jsL2, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency * 0.001));
+	json_object_object_add(jsL2, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredVolts * 0.01) * 100) / 100));
+	json_object_object_add(jsL2, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredAmps * 0.0001) * 100) / 100));
+	json_object_object_add(jsL2, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredPower * 0.01) * 100) / 100));
+	json_object_object_add(jsL2, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency * 0.001) * 100) / 100));
 	
 	json_object_object_add(jsL2, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorGeneral));
 	
@@ -125,10 +125,10 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL2, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorFieldCCW)) ;
 	json_object_object_add(jsL2, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorZeroCross)) ;*/
 	
-	json_object_object_add(jsL3, "voltage", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredVolts * 0.01));
-	json_object_object_add(jsL3, "current", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredAmps * 0.0001));
-	json_object_object_add(jsL3, "power", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredPower * 0.01));
-	json_object_object_add(jsL3, "frequency", json_object_new_double(pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency * 0.001));
+	json_object_object_add(jsL3, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredVolts * 0.01) * 100) / 100));
+	json_object_object_add(jsL3, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredAmps * 0.0001) * 100) / 100));
+	json_object_object_add(jsL3, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredPower * 0.01) * 100) / 100));
+	json_object_object_add(jsL3, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency * 0.001) * 100) / 100));
 	
 	json_object_object_add(jsL3, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorGeneral));
 	
