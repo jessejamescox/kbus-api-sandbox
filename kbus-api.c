@@ -48,12 +48,11 @@
 
 struct node controller;
 
-static int run = 1;
+int run = 0;
+int iCounts = 0;
 int switch_state = 0;
 int initialized = 0;
 int kbusIsInit = 1;
-
-int iCounts = 0;
 
 int main(int argc, char *argv[])
 {
@@ -61,7 +60,11 @@ int main(int argc, char *argv[])
 	struct mosquitto *mosq;
 	int rc = 0;
 	
+	int led = 0;
+	
 	int kbus_resp = 0;
+	
+	char *mosq_err;
 
 
 	// get the config	
@@ -89,8 +92,11 @@ int main(int argc, char *argv[])
 				// send one last object to notify the system that it is stopped
 				build_controller_object(mosq);
 				
-				// set the led to stop
-				set_led(IS_STOPPED);
+				if (led)
+				{
+					set_led(IS_STOPPED);
+					led = 0;
+				}
 
 				printf("program stopped\n");
 				// disconnect from the broker 
@@ -113,30 +119,51 @@ int main(int argc, char *argv[])
 			{
 				controller.ss = get_switch_state();
 				
-				rc = mosquitto_loop(mosq, -1, 1);
-				if (run && rc)
+				rc = mosquitto_loop(mosq, 5, 1);
+				mosq_err = mosquitto_strerror(rc);
+				printf("%s\n", mosq_err);
+				if (rc)
 				{
-					set_led(IS_ERROR);
-					initialized = 0;
+					if (led)
+					{
+						set_led(IS_ERROR);
+						led = 0;
+					}
+
 					printf("connection error!\n");
 					sleep(3);
 					mosquitto_reconnect(mosq);
 				}
 				else
 				{
+					if (!led)
+					{
+						//set_led(IS_RUNNING);
+						led = 1;
+					}
+					
 					// the main event
-					build_controller_object(mosq);
-								
+					if (run)
+					{
+						build_controller_object(mosq);
+					}
+					else
+					{
+						if (iCounts >= 100)
+						{
+							run = 1;
+						}
+						else
+						{
+							iCounts++;
+						}
+					}
+					
 					// do the kbus work
 					kbus_resp = kbus_read(&mosq, &this_config, &kbus); //, controller);
 				
-					// send some error stuff if needed
-					if (kbus_resp != 0) 
-					{
-						char *kbus_error_string = build_error_object(true, controller, this_config, "kbus error present");
-						mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(kbus_error_string), kbus_error_string, 0, 0);
-					}	
-					usleep(sleepVal);
+					
+					usleep(50000);
 				}
 			}
 			//else
@@ -164,6 +191,7 @@ int main(int argc, char *argv[])
 					mosquitto_message_callback_set(mosq, message_callback);
 
 					rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
+					printf("%d\n", rc);
 
 					mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
 
@@ -179,16 +207,23 @@ int main(int argc, char *argv[])
 					{
 						controller.number_of_modules = kbus.terminalCount;
 					}
+		
 				}
 				build_controller_object(mosq);
 				initialized = 1;
-				set_led(IS_RUNNING);
+				//set_led(IS_RUNNING);
 
 			//}
 			break;
 			// reset
 		case 3:
 			printf("reset tripped\n");
+			
+			if (led)
+			{
+				set_led(IS_STOPPED);
+				led = 0;
+			}
 			
 			// put some cool reset logic here
 			

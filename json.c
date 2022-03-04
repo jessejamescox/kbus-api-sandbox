@@ -340,10 +340,10 @@ void build_controller_object(struct mosquitto *mosq)
 { 
 	struct json_object *jsState = json_object_new_object();
 	struct json_object *jsReported = json_object_new_object();
-	struct json_object *jsController = json_object_new_object();//
+	//struct json_object *jsController = json_object_new_object();s
 	
-	json_object_object_add(jsController, "controller", main_controller_object());
-	json_object_object_add(jsReported, "reported", jsController);
+	//json_object_object_add(jsController, "controller", main_controller_object());
+	json_object_object_add(jsReported, "reported", main_controller_object());
 	json_object_object_add(jsState, "state", jsReported);
 	
 	//char *jsonString = (char *) malloc(4096 * sizeof(char));
@@ -351,7 +351,7 @@ void build_controller_object(struct mosquitto *mosq)
 	
 	mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
 	
-	while (json_object_put(jsController)) {};
+	//while (json_object_put(jsController)) {};
 	while (json_object_put(jsReported)) {};
 	while (json_object_put(jsState)) {};
 }
