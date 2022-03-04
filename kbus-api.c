@@ -48,8 +48,6 @@
 #define IS_STOPPED	0x02
 #define IS_ERROR	0x80
 
-#define LOGFILE "/etc/kbus-daemon/logs/runtime.log"
-
 struct node controller;
 
 int run = 0;
@@ -59,7 +57,7 @@ int initialized = 0;
 int kbusIsInit = 1;
 
 int main(int argc, char *argv[])
-{
+{	
 	uint8_t reconnect = true;
 	struct mosquitto *mosq;
 	int rc = 0;
@@ -79,6 +77,8 @@ int main(int argc, char *argv[])
 	controller.nodeId = this_config.node_id;
 	
 	set_led(IS_STOPPED);
+	
+	log_execution("program started", 0);
 
 	while (1)
 	{	
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 					led = 0;
 				}
 
-				printf("program stopped\n");
+				log_execution("switch event: STOP", 0);
 				// disconnect from the broker 
 				mosquitto_disconnect(mosq);
 
@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
 				mosquitto_lib_cleanup();
 				// reset the init
 				initialized = 0;
+				iCounts = 0;
 			}
 			break;
 
@@ -123,7 +124,8 @@ int main(int argc, char *argv[])
 			{
 				controller.ss = get_switch_state();
 				
-				rc = mosquitto_loop(mosq, 5, 1);
+				rc = mosquitto_loop(mosq, 0, 1);
+				//printf("%i\n", rc);
 				if (rc)
 				{
 					if (led)
@@ -132,7 +134,7 @@ int main(int argc, char *argv[])
 						led = 0;
 					}
 
-					printf("connection error!\n");
+					log_execution("MQTT Broker Connection Lost", 2);
 					sleep(3);
 					mosquitto_reconnect(mosq);
 					tik = current_timestamp();
@@ -153,7 +155,7 @@ int main(int argc, char *argv[])
 						build_controller_object(mosq);
 						tik = current_timestamp();
 					}
-					else
+					else // give the connection some time to stabilize
 					{
 						if (iCounts >= 100)
 						{
@@ -169,7 +171,7 @@ int main(int argc, char *argv[])
 					kbus_resp = kbus_read(&mosq, &this_config, &kbus); //, controller);
 				
 					
-					usleep(50000);
+					usleep(10000);
 				}
 			}
 			//else
@@ -217,6 +219,7 @@ int main(int argc, char *argv[])
 				}
 				build_controller_object(mosq);
 				initialized = 1;
+				log_execution("MQTT Broker Connection Success", 0);
 				//set_led(IS_RUNNING);
 			tik = current_timestamp();
 
@@ -224,7 +227,7 @@ int main(int argc, char *argv[])
 			break;
 			// reset
 		case 3:
-			printf("reset tripped\n");
+			log_execution("switch event: RESET", 0);
 			
 			if (led)
 			{

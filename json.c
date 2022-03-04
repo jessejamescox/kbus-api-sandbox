@@ -349,7 +349,8 @@ void build_controller_object(struct mosquitto *mosq)
 	//char *jsonString = (char *) malloc(4096 * sizeof(char));
 	char *jsonString = json_object_to_json_string(jsState);
 	
-	mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
+	int msq_pub = mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
+	printf("%i\n", msq_pub);
 	
 	//while (json_object_put(jsController)) {};
 	while (json_object_put(jsReported)) {};

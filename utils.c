@@ -121,5 +121,3 @@ unsigned long current_timestamp() {
 	// printf("milliseconds: %lld\n", milliseconds);
 	return milliseconds;
 }
-
-
