@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 					{
 						//set_led(IS_RUNNING);
 						led = 1;
-					}
+					}-
 					
 					// the main event
 					if (run)
