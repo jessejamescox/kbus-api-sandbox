@@ -125,7 +125,6 @@ int main(int argc, char *argv[])
 				controller.ss = get_switch_state();
 				
 				rc = mosquitto_loop(mosq, 0, 1);
-				//printf("%i\n", rc);
 				if (rc)
 				{
 					if (led)
@@ -199,7 +198,6 @@ int main(int argc, char *argv[])
 					mosquitto_message_callback_set(mosq, message_callback);
 
 					rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
-					printf("%d\n", rc);
 
 					mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
 
