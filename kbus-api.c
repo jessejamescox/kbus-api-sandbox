@@ -196,6 +196,7 @@ int main(int argc, char *argv[])
 				{
 					mosquitto_connect_callback_set(mosq, connect_callback);
 					mosquitto_message_callback_set(mosq, message_callback);
+					//mosquitto_disconnect_callback_set(mosq, disconnect_callback);
 
 					rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
 

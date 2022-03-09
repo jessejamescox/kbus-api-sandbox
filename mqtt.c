@@ -35,3 +35,8 @@ void connect_callback(struct mosquitto *mosq, void *obj, int result)
 {
 	log_execution("MQTT Broker Connection Success", 0);
 }
+
+void disconnect_callback(struct mosquitto *mosq, void *obj, int result)
+{
+	log_execution("MQTT Broker Connection Lost", 0);
+}
