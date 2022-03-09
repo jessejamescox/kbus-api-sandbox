@@ -30,7 +30,7 @@ void swap(char *x, char *y) {
 	char t = *x; *x = *y; *y = t;
 }
  
-// Function to reverse `buffer[i…j]`
+// Function to reverse `buffer[iï¿½j]`
 char* reverse(char *buffer, int i, int j)
 {
 	while (i < j) {
@@ -120,4 +120,18 @@ unsigned long current_timestamp() {
 	long long milliseconds = te.tv_sec * 1000LL + te.tv_usec / 1000; // calculate milliseconds
 	// printf("milliseconds: %lld\n", milliseconds);
 	return milliseconds;
+}
+
+int get_cpu_load() {
+	int FileHandler;
+	char FileBuffer[1024];
+	float load;
+
+	FileHandler = open("/proc/loadavg", O_RDONLY);
+	if(FileHandler < 0) {
+		return -1; }
+	read(FileHandler, FileBuffer, sizeof(FileBuffer) - 1);
+	sscanf(FileBuffer, "%f", &load);
+	close(FileHandler);
+	return (int)(load * 100);
 }

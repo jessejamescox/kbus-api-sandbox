@@ -11,4 +11,6 @@ extern uint32_t get_time_millis(void);
 
 extern unsigned long current_timestamp();
 
+extern int get_cpu_load();
+
 #endif /*__UTILS_H__*/
