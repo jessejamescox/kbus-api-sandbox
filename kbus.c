@@ -395,7 +395,7 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 				dxMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
 				break;
 			case aim:
-				aiMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+				aiMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_analog(i_modules, i_channels, kbus);
 				break;
 			case spm:
 				if ((controller.modules[i_modules].pn == 494) || (controller.modules[i_modules].pn == 495))

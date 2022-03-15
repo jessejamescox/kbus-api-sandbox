@@ -79,6 +79,45 @@ int main(int argc, char *argv[])
 	set_led(IS_STOPPED);
 	
 	log_execution("program started", 0);
+	
+	mosquitto_lib_init();
+
+	mosq = mosquitto_new(controller.nodeId, true, 0);
+
+	// if tls enabled add tls object to mosq
+	if (this_config.support_tls)
+	{
+		mosquitto_tls_set(mosq, this_config.rootca_path, NULL, this_config.cert_path, this_config.key_path, NULL);
+	}
+	// if tls enabled add tls object to mosq
+	if (this_config.support_userpasswd)
+	{
+		mosquitto_username_pw_set(mosq, this_config.mqtt_username, this_config.mqtt_password);
+	}
+
+	if (mosq)
+	{
+		mosquitto_connect_callback_set(mosq, connect_callback);
+		mosquitto_message_callback_set(mosq, message_callback);
+		mosquitto_disconnect_callback_set(mosq, disconnect_callback);
+
+		rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
+
+		mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
+
+		if (kbusIsInit)
+		{
+			// scan the kbus
+			kbus_init(&kbus);
+			kbusIsInit = 0;						
+		}
+
+		// map everything to the controller object as part of the init process
+		if (build_module_object(kbus.terminalCount, kbus.terminalDescription, kbus.terminals, &controller.modules))
+		{
+			controller.number_of_modules = kbus.terminalCount;
+		}
+	}
 
 	while (1)
 	{	
@@ -104,13 +143,13 @@ int main(int argc, char *argv[])
 
 				log_execution("switch event: STOP", 0);
 				// disconnect from the broker 
-				mosquitto_disconnect(mosq);
+				//mosquitto_disconnect(mosq);
 
 				// reset the mqtt objects
-				mosquitto_destroy(mosq);
+				//mosquitto_destroy(mosq);
 
 				// decrement the lib ref
-				mosquitto_lib_cleanup();
+				//mosquitto_lib_cleanup();
 				// reset the init
 				initialized = 0;
 				iCounts = 0;
@@ -120,11 +159,16 @@ int main(int argc, char *argv[])
 			// run
 		case 1:
 
-			while(initialized && (controller.ss == 1))//if (initialized == 1)
+			while(initialized)
 			{
 				controller.ss = get_switch_state();
 				
-				rc = mosquitto_loop(mosq, 0, 1);
+				if (controller.ss != 1)
+				{
+					break;
+				}
+				
+				rc = mosquitto_loop(mosq, -1, 1);
 				if (rc)
 				{
 					if (led)
@@ -132,8 +176,7 @@ int main(int argc, char *argv[])
 						set_led(IS_ERROR);
 						led = 0;
 					}
-
-					log_execution("MQTT Broker Connection Lost", 2);
+					
 					sleep(3);
 					mosquitto_reconnect(mosq);
 					tik = current_timestamp();
@@ -177,45 +220,6 @@ int main(int argc, char *argv[])
 			//{
 				set_led(IS_STOPPED);
 				
-				mosquitto_lib_init();
-
-				mosq = mosquitto_new(controller.nodeId, true, 0);
-
-				// if tls enabled add tls object to mosq
-				if (this_config.support_tls)
-				{
-					mosquitto_tls_set(mosq, this_config.rootca_path, NULL, this_config.cert_path, this_config.key_path, NULL);
-				}
-				// if tls enabled add tls object to mosq
-				if (this_config.support_userpasswd)
-				{
-					mosquitto_username_pw_set(mosq, this_config.mqtt_username, this_config.mqtt_password);
-				}
-
-				if (mosq)
-				{
-					mosquitto_connect_callback_set(mosq, connect_callback);
-					mosquitto_message_callback_set(mosq, message_callback);
-					//mosquitto_disconnect_callback_set(mosq, disconnect_callback);
-
-					rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
-
-					mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
-
-					if (kbusIsInit)
-					{
-						// scan the kbus
-						kbus_init(&kbus);
-						kbusIsInit = 0;						
-					}
-
-					// map everything to the controller object as part of the init process
-					if (build_module_object(kbus.terminalCount, kbus.terminalDescription, kbus.terminals, &controller.modules))
-					{
-						controller.number_of_modules = kbus.terminalCount;
-					}
-		
-				}
 				build_controller_object(mosq);
 				initialized = 1;
 				log_execution("MQTT Broker Connection Success", 0);

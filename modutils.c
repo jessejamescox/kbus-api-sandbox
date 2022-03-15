@@ -34,3 +34,5 @@ struct json_object *return_module_object(int iModule)
 		break;
 	}
 };
+
+//bool get_module_error(int )

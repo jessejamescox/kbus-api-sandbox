@@ -84,20 +84,6 @@ char* itoa(int value, char* buffer, int base)
 	return reverse(buffer, 0, i - 1);
 }
 
-/*
-float bytes_to_float(__uint8_t hsb, __uint8_t hmsb, __uint8_t lmsb, __uint8_t lsb)
-{
-	float f;
-	char b[4];
-	b[0] = lsb;
-	b[1] = lmsb;
-	b[2] = hmsb;
-	b[3] = hsb;
-	//float f = *(float *)&b;
-	memcpy(&f, b, sizeof(f));
-	return f;
-}*/
-
 char *return_default_labe(int mp, char * dir, int cp)
 {
 	char *out;
@@ -120,18 +106,4 @@ unsigned long current_timestamp() {
 	long long milliseconds = te.tv_sec * 1000LL + te.tv_usec / 1000; // calculate milliseconds
 	// printf("milliseconds: %lld\n", milliseconds);
 	return milliseconds;
-}
-
-int get_cpu_load() {
-	int FileHandler;
-	char FileBuffer[1024];
-	float load;
-
-	FileHandler = open("/proc/loadavg", O_RDONLY);
-	if(FileHandler < 0) {
-		return -1; }
-	read(FileHandler, FileBuffer, sizeof(FileBuffer) - 1);
-	sscanf(FileBuffer, "%f", &load);
-	close(FileHandler);
-	return (int)(load * 100);
 }

@@ -96,10 +96,10 @@ int get_switch_state(void) {
 		//printf("RESET");
 		outVal = 3;
 		break;
-	default:
+	//default:
 		//printf("ERROR");
-		outVal = -1;
-		break;
+		//outVal = -1;
+		//break;
 	}
 
 	//if also BUTTON_RESET_ALL is active add this to output
