@@ -459,8 +459,8 @@ int parse_mqtt(struct mosquitto *mosq, char *message) {
 	// start checking the json objects
 	if (json_object_object_get_ex(parsed_json, "state", &jsonState)) {
 		if (json_object_object_get_ex(jsonState, "desired", &jsonDesired)) {
-			if (json_object_object_get_ex(jsonDesired, "controller", &jsonController)) {
-				if (json_object_object_get_ex(jsonController, "modules", &jsonModules)) {
+			//if (json_object_object_get_ex(jsonDesired, "controller", &jsonController)) {
+			if (json_object_object_get_ex(jsonDesired, "modules", &jsonModules)) {
 				
 					
 					for (int iModules = 0; iModules < controller.number_of_modules; iModules++) 
