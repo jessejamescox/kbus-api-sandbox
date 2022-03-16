@@ -27,6 +27,6 @@ extern void build_controller_object(struct mosquitto *mosq);
 
 extern void build_event_object(struct mosquitto *mosq, int modulePosition, int channelPosition, int channelValue);
 
-extern int parse_mqtt(struct mosquitto *mosq, char *message);
+extern int xx_parse_mqtt(struct mosquitto *mosq, char *message);
 
 #endif /*__JSON_H__*/

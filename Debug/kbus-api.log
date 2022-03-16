@@ -2,7 +2,150 @@
   SSH: Handshaking...
   SSH: Checking key...
   SSH: Authenticating...
-  note : C:\Users\JC\Documents\GitHub\kbus-api-sandbox => /tmp/VisualGDB/c/Users/JC/Documents/GitHub/kbus-api-sandbox: 29 files are up-to-date.
+  note : C:\Users\JC\Documents\GitHub\kbus-api-sandbox => /tmp/VisualGDB/c/Users/JC/Documents/GitHub/kbus-api-sandbox: 1 files copied (29KB), 28 files are up-to-date.
   note : Run "make  CONFIG=Debug" in directory "/tmp/VisualGDB/c/Users/JC/Documents/GitHub/kbus-api-sandbox" on wago@192.168.27.136 (SSH)
   make  CONFIG=Debug
-  make: Nothing to be done for 'all'.
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc -std=c99 -ggdb -ffunction-sections -O0  -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/OsLinux -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dal -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0/include -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/diagnostic -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/ctutil -I/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/include/dbus-1.0 -DDEBUG=1  -c json.c -o Debug/json.o -MD -MF Debug/json.dep
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\kbus-api.h(5): note : included from here
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(24): note : included from here
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\kbus.h(34,1): warning : useless storage class specifier in empty declaration
+     34 | };
+        | ^
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'pmm_module_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(94,65): warning : implicit declaration of function ‘round’
+     94 |  json_object_object_add(jsL1, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredVolts * 0.01) * 100) / 100)) ;
+        |                                                                 ^~~~~
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(94,65): warning : incompatible implicit declaration of built-in function ‘round’
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(30,1): note : include ‘<math.h>’ or provide a declaration of ‘round’
+     29 | #include "utils.h"
+    +++ |+#include <math.h>
+     30 | #include <time.h>
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'din_data_breakout_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(161,3): warning : implicit declaration of function ‘itoa’
+    161 |   itoa((channelIndex + 1), &ch, 10) ;
+        |   ^~~~
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(162,15): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    162 |   strcat(chn, &ch) ;
+        |               ^~~
+        |               |
+        |               char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'dout_data_breakout_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(181,15): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    181 |   strcat(chn, &ch);
+        |               ^~~
+        |               |
+        |               char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'dxi_data_breakout_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(200,15): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    200 |   strcat(chn, &ch);
+        |               ^~~
+        |               |
+        |               char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'dxo_data_breakout_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(219,14): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    219 |  strcat(chn, &ch);
+        |              ^~~
+        |              |
+        |              char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'ain_data_breakout_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(238,14): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    238 |  strcat(chn, &ch);
+        |              ^~~
+        |              |
+        |              char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'aout_data_breakout_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(257,15): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    257 |   strcat(chn, &ch);
+        |               ^~~
+        |               |
+        |               char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_controller_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(376,21): warning : initialization discards ‘const’ qualifier from pointer target type
+    376 |  char *jsonString = json_object_to_json_string(jsState) ;
+        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_event_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(443,86): warning : passing argument 1 of ‘json_object_new_int’ makes integer from pointer without a cast
+    443 | json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)) ; // faulting here?? changed this to int
+        |                                                                            ~~~~~~~~~~^~~~~~~~~~~~~
+        |                                                                                      |
+        |                                                                                      char *
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\linkhash.h(16): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json.h(22): note : included from here
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(23): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0005\include\json-c\json_object.h(473,28): note : expected ‘int32_t’ {aka ‘int’} but argument is of type ‘char *’
+    473 | extern struct json_object* json_object_new_int(int32_t i);
+        |                            ^~~~~~~~~~~~~~~~~~~
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(455,22): warning : initialization discards ‘const’ qualifier from pointer target type
+    455 | char *event_string = json_object_to_json_string(jsonMain) ;
+        |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'parse_input_channel_data'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(484,15): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    484 |   strcat(chn, &ch);
+        |               ^~~
+        |               |
+        |               char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(498,76): warning : assignment discards ‘const’ qualifier from pointer target type
+    498 |      aiMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+        |                                                                            ^
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(506,76): warning : assignment discards ‘const’ qualifier from pointer target type
+    506 |      diMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+        |                                                                            ^
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'parse_output_channel_data'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(529,15): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    529 |   strcat(chn, &ch);
+        |               ^~~
+        |               |
+        |               char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(543,76): warning : assignment discards ‘const’ qualifier from pointer target type
+    543 |      aiMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+        |                                                                            ^
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(557,77): warning : assignment discards ‘const’ qualifier from pointer target type
+    557 |      doMod[controller.modules[iModules].typeIndex].outData[iChannels].label = json_object_get_string(jLbl);
+        |                                                                             ^
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'parse_module'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(634,15): warning : passing argument 2 of ‘strcat’ from incompatible pointer type
+    634 |   strcat(mod, &mi);
+        |               ^~~
+        |               |
+        |               char **
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(21): note : included from here
+  C:\Users\JC\AppData\Local\VisualGDB\RemoteSourceCache\192.168.27.136\0007\include\string.h(130,14): note : expected ‘const char * restrict’ but argument is of type ‘char **’
+    130 | extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+        |              ^~~~~~
+  C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(0): note : In function 'build_error_object'
+C:\Users\JC\Documents\GitHub\kbus-api-sandbox\json.c(834,24): warning : initialization discards ‘const’ qualifier from pointer target type
+    834 |  char *return_string = json_object_to_json_string(json_error_object);
+        |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-g++ -o Debug/kbus-api -Wl,-gc-sections   -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/usr/lib -L/home/wago/wago/ptxproj/platform-wago-pfcXXX/sysroot-target/lib -Wl,--start-group Debug/get_config.o Debug/json.o Debug/kbus-api.o Debug/kbus.o Debug/led.o Debug/logger.o Debug/modutils.o Debug/mqtt.o Debug/node.o Debug/switch.o Debug/utils.o -ldal -lglib-2.0 -lffi -lpthread -lrt -llibloader -loslinux -ldl -lncurses -lpcre -lconfig -lgmodule-2.0 -lz -lgio-2.0 -ldbus-glib-1 -lwago_dbus -ldbus-1 -lgobject-2.0 -ldbuskbuscommon -lcrypto -lssl -lmosquitto -loms -ljson-c -ldiagnostic  -Wl,--rpath='$ORIGIN'   -Wl,--end-group

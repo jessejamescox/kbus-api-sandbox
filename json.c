@@ -74,29 +74,29 @@ struct json_object *analog_in_channel_object(int mp, int cp)
 	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label));
 	json_object_object_add(jobj, "deadband", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].deadband));
 	return jobj;
-}
+};
 
 struct json_object *analog_out_channel_object(int mp, int cp)
 {
-	struct json_object *jobj = json_object_new_object();
-	json_object_object_add(jobj, "value", json_object_new_int(aoMod[controller.modules[mp].typeIndex].outData[cp].value));
-	json_object_object_add(jobj, "label", json_object_new_string(aoMod[controller.modules[mp].typeIndex].outData[cp].label));
-	return jobj;
+	struct json_object *jobj = json_object_new_object() ;
+	json_object_object_add(jobj, "value", json_object_new_int(aoMod[controller.modules[mp].typeIndex].outData[cp].value)) ;
+	json_object_object_add(jobj, "label", json_object_new_string(aoMod[controller.modules[mp].typeIndex].outData[cp].label)) ;
+	return jobj ;
 }
 
 struct json_object *pmm_module_object(int mp)
 {
-	struct json_object *jobj = json_object_new_object();
-	struct json_object *jsL1 = json_object_new_object();
-	struct json_object *jsL2 = json_object_new_object();
-	struct json_object *jsL3 = json_object_new_object();
+	struct json_object *jobj = json_object_new_object() ;
+	struct json_object *jsL1 = json_object_new_object() ;
+	struct json_object *jsL2 = json_object_new_object() ;
+	struct json_object *jsL3 = json_object_new_object() ;
 
-	json_object_object_add(jsL1, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredVolts * 0.01) * 100) / 100));
-	json_object_object_add(jsL1, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredAmps * 0.0001) * 100) / 100));
-	json_object_object_add(jsL1, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredPower * 0.01) * 100) / 100));
-	json_object_object_add(jsL1, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency * 0.001) * 100) / 100));
+	json_object_object_add(jsL1, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredVolts * 0.01) * 100) / 100)) ;
+	json_object_object_add(jsL1, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredAmps * 0.0001) * 100) / 100)) ;
+	json_object_object_add(jsL1, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredPower * 0.01) * 100) / 100)) ;
+	json_object_object_add(jsL1, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L1.measuredFrequency * 0.001) * 100) / 100)) ;
 
-	json_object_object_add(jsL1, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorGeneral));
+	json_object_object_add(jsL1, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorGeneral)) ;
 
 	/*json_object_object_add(jsL1, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorUnderVolts)) ;
 	json_object_object_add(jsL1, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorOverVolts)) ;
@@ -106,12 +106,12 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL1, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorFieldCCW)) ;
 	json_object_object_add(jsL1, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L1.errorZeroCross)) ;*/
 
-	json_object_object_add(jsL2, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredVolts * 0.01) * 100) / 100));
-	json_object_object_add(jsL2, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredAmps * 0.0001) * 100) / 100));
-	json_object_object_add(jsL2, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredPower * 0.01) * 100) / 100));
-	json_object_object_add(jsL2, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency * 0.001) * 100) / 100));
+	json_object_object_add(jsL2, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredVolts * 0.01) * 100) / 100)) ;
+	json_object_object_add(jsL2, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredAmps * 0.0001) * 100) / 100)) ;
+	json_object_object_add(jsL2, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredPower * 0.01) * 100) / 100)) ;
+	json_object_object_add(jsL2, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L2.measuredFrequency * 0.001) * 100) / 100)) ;
 
-	json_object_object_add(jsL2, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorGeneral));
+	json_object_object_add(jsL2, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorGeneral)) ;
 
 	/*json_object_object_add(jsL2, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorUnderVolts)) ;
 	json_object_object_add(jsL2, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorOverVolts)) ;
@@ -121,12 +121,12 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL2, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorFieldCCW)) ;
 	json_object_object_add(jsL2, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L2.errorZeroCross)) ;*/
 
-	json_object_object_add(jsL3, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredVolts * 0.01) * 100) / 100));
-	json_object_object_add(jsL3, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredAmps * 0.0001) * 100) / 100));
-	json_object_object_add(jsL3, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredPower * 0.01) * 100) / 100));
-	json_object_object_add(jsL3, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency * 0.001) * 100) / 100));
+	json_object_object_add(jsL3, "voltage", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredVolts * 0.01) * 100) / 100)) ;
+	json_object_object_add(jsL3, "current", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredAmps * 0.0001) * 100) / 100)) ;
+	json_object_object_add(jsL3, "power", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredPower * 0.01) * 100) / 100)) ;
+	json_object_object_add(jsL3, "frequency", json_object_new_double(round((pmMod[controller.modules[mp].typeIndex].L3.measuredFrequency * 0.001) * 100) / 100)) ;
 
-	json_object_object_add(jsL3, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorGeneral));
+	json_object_object_add(jsL3, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorGeneral)) ;
 
 	/*json_object_object_add(jsL3, "errorUnderVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorUnderVolts)) ;
 	json_object_object_add(jsL3, "errorOverVolts", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorOverVolts)) ;
@@ -136,24 +136,62 @@ struct json_object *pmm_module_object(int mp)
 	json_object_object_add(jsL3, "errorFieldCCW", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorFieldCCW)) ;
 	json_object_object_add(jsL3, "errorZeroCross", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].L3.errorZeroCross)) ;*/
 
-	json_object_object_add(jobj, "L1", json_object_get(jsL1));
-	json_object_object_add(jobj, "L2", json_object_get(jsL2));
-	json_object_object_add(jobj, "L3", json_object_get(jsL3));
-	json_object_object_add(jobj, "errorGroup", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].grpError));
-	json_object_object_add(jobj, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].genError));
+	json_object_object_add(jobj, "L1", json_object_get(jsL1)) ;
+	json_object_object_add(jobj, "L2", json_object_get(jsL2)) ;
+	json_object_object_add(jobj, "L3", json_object_get(jsL3)) ;
+	json_object_object_add(jobj, "errorGroup", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].grpError)) ;
+	json_object_object_add(jobj, "errorGeneral", json_object_new_boolean(pmMod[controller.modules[mp].typeIndex].genError)) ;
 
-	json_object_put(jsL1);
-	json_object_put(jsL2);
-	json_object_put(jsL3);
+	json_object_put(jsL1) ;
+	json_object_put(jsL2) ;
+	json_object_put(jsL3) ;
 
-	return jobj;
+	return jobj ;
 }
 
-struct json_object *in_data_breakout_object(int mp)
+struct json_object *din_data_breakout_object(int mp)
+{
+	struct json_object *jobj = json_object_new_object() ;
+
+	for(int channelIndex = 0 ; channelIndex < controller.modules[mp].inChannelCount ; channelIndex++)
+	{
+		char *chn = (char *)malloc(10 * sizeof(char)) ;
+		strcpy(chn, "channel") ;
+		char *ch ;
+		itoa((channelIndex + 1), &ch, 10) ;
+		strcat(chn, &ch) ;
+
+		json_object_object_add(jobj, chn, dig_in_channel_object(mp, channelIndex)) ;
+
+		free(chn) ;
+	}
+	return jobj ;
+}
+
+struct json_object *dout_data_breakout_object(int mp)
 {
 	struct json_object *jobj = json_object_new_object();
 
 	for (int channelIndex = 0; channelIndex < controller.modules[mp].outChannelCount; channelIndex++)
+	{
+		char *chn = (char *)malloc(10 * sizeof(char));
+		strcpy(chn, "channel");
+		char *ch;
+		itoa((channelIndex + 1), &ch, 10);
+		strcat(chn, &ch);
+
+		json_object_object_add(jobj, chn, dig_out_channel_object(mp, channelIndex));
+
+		free(chn);
+	}
+	return jobj;
+}
+
+struct json_object *dxi_data_breakout_object(int mp)
+{
+	struct json_object *jobj = json_object_new_object();
+
+	for (int channelIndex = 0; channelIndex < controller.modules[mp].inChannelCount; channelIndex++)
 	{
 		char *chn = (char *)malloc(10 * sizeof(char));
 		strcpy(chn, "channel");
@@ -168,7 +206,45 @@ struct json_object *in_data_breakout_object(int mp)
 	return jobj;
 }
 
-struct json_object *out_data_breakout_object(int mp)
+struct json_object *dxo_data_breakout_object(int mp)
+{
+	struct json_object *jobj = json_object_new_object();
+
+	for (int channelIndex = 0; channelIndex < controller.modules[mp].outChannelCount; channelIndex++)
+{
+	char *chn = (char *)malloc(10 * sizeof(char));
+	strcpy(chn, "channel");
+	char *ch;
+	itoa((channelIndex + 1), &ch, 10);
+	strcat(chn, &ch);
+
+	json_object_object_add(jobj, chn, dx_out_channel_object(mp, channelIndex));
+
+	free(chn);
+}
+return jobj;
+}
+
+struct json_object *ain_data_breakout_object(int mp)
+{
+	struct json_object *jobj = json_object_new_object();
+
+	for (int channelIndex = 0; channelIndex < controller.modules[mp].inChannelCount; channelIndex++)
+{
+	char *chn = (char *)malloc(10 * sizeof(char));
+	strcpy(chn, "channel");
+	char *ch;
+	itoa((channelIndex + 1), &ch, 10);
+	strcat(chn, &ch);
+
+	json_object_object_add(jobj, chn, analog_in_channel_object(mp, channelIndex));
+
+	free(chn);
+}
+return jobj;
+}
+
+struct json_object *aout_data_breakout_object(int mp)
 {
 	struct json_object *jobj = json_object_new_object();
 
@@ -180,7 +256,7 @@ struct json_object *out_data_breakout_object(int mp)
 		itoa((channelIndex + 1), &ch, 10);
 		strcat(chn, &ch);
 
-		json_object_object_add(jobj, chn, dx_out_channel_object(mp, channelIndex));
+		json_object_object_add(jobj, chn, analog_out_channel_object(mp, channelIndex));
 
 		free(chn);
 	}
@@ -194,69 +270,24 @@ struct json_object *simple_channels_object(int mp)
 	switch (controller.modules[mp].mtype)
 	{
 	case dim: // digital inputs
-		for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++)
-		{
-			char *chn = (char *)malloc(10 * sizeof(char));
-			strcpy(chn, "channel");
-			char *ch;
-			itoa((channelIndex + 1), &ch, 10);
-			strcat(chn, &ch);
-
-			json_object_object_add(jobj, chn, dig_in_channel_object(mp, channelIndex));
-
-			free(chn);
-		}
+		json_object_object_add(jobj, "inputs", din_data_breakout_object(mp));
 		break;
 
 	case dom:
-
-		for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++)
-		{
-			char *chn = (char *)malloc(10 * sizeof(char));
-			strcpy(chn, "channel");
-			char *ch;
-			itoa((channelIndex + 1), &ch, 10);
-			strcat(chn, &ch);
-
-			json_object_object_add(jobj, chn, dig_out_channel_object(mp, channelIndex));
-
-			free(chn);
-		}
+		json_object_object_add(jobj, "outputs", dout_data_breakout_object(mp));
 		break;
 
 	case dxm:
-		json_object_object_add(jobj, "inputs", in_data_breakout_object(mp));
-		json_object_object_add(jobj, "outputs", out_data_breakout_object(mp));
+		json_object_object_add(jobj, "inputs", dxi_data_breakout_object(mp));
+		json_object_object_add(jobj, "outputs", dxo_data_breakout_object(mp));
 		break;
 
 	case aim:
-		for (int channelIndex = 0; channelIndex < controller.modules[mp].inChannelCount; channelIndex++)
-		{
-			char *chn = (char *)malloc(10 * sizeof(char));
-			strcpy(chn, "channel");
-			char *ch;
-			itoa((channelIndex + 1), &ch, 10);
-			strcat(chn, &ch);
-
-			json_object_object_add(jobj, chn, analog_in_channel_object(mp, channelIndex));
-
-			free(chn);
-		}
+		json_object_object_add(jobj, "inputs", ain_data_breakout_object(mp));
 		break;
 
 	case aom:
-		for (int channelIndex = 0; channelIndex < controller.modules[mp].channelCount; channelIndex++)
-		{
-			char *chn = (char *)malloc(10 * sizeof(char));
-			strcpy(chn, "channel");
-			char *ch;
-			itoa((channelIndex + 1), &ch, 10);
-			strcat(chn, &ch);
-
-			json_object_object_add(jobj, chn, analog_out_channel_object(mp, channelIndex));
-
-			free(chn);
-		}
+		json_object_object_add(jobj, "outputs", aout_data_breakout_object(mp));
 		break;
 	}
 	return jobj;
@@ -276,25 +307,25 @@ struct json_object *simple_module_object(int mp)
 		switch (controller.modules[mp].pn)
 		{
 		case 494 ... 495: // check for power measurement module
-			json_object_object_add(jobj, "data", pmm_module_object(mp));
+			json_object_object_add(jobj, "process_data", pmm_module_object(mp));
 			break;
 		}
 	}
-	else // somple modules
+	else // simple modules
 	{
 		json_object_object_add(jobj, "input_channel_count", json_object_new_int(controller.modules[mp].inChannelCount));
 		json_object_object_add(jobj, "output_channel_count", json_object_new_int(controller.modules[mp].outChannelCount));
 
 		// add the channel info
-		json_object_object_add(jobj, "channels", simple_channels_object(mp));
+		json_object_object_add(jobj, "process_data", simple_channels_object(mp));
 	}
 
 	return jobj;
-}
+};
 
 struct json_object *simple_modules_object()
 {
-	struct json_object *jobj = json_object_new_object();
+	struct json_object *jobj = json_object_new_object() ;
 
 	// add the channels
 	for (int moduleIndex = 0; moduleIndex < controller.number_of_modules; moduleIndex++)
@@ -313,12 +344,12 @@ struct json_object *simple_modules_object()
 		// free the holding char
 		free(mod);
 	}
-	return jobj;
-}
+	return jobj ;
+};
 
 struct json_object *main_controller_object()
 {
-	struct json_object *jobj = json_object_new_object();
+	struct json_object *jobj = json_object_new_object() ;
 
 	// add the module info
 	json_object_object_add(jobj, "node_id", json_object_new_string(controller.nodeId));
@@ -328,118 +359,349 @@ struct json_object *main_controller_object()
 	// add the channel info
 	json_object_object_add(jobj, "modules", simple_modules_object());
 
-	return jobj;
-}
+	return jobj ;
+};
 
 void build_controller_object(struct mosquitto *mosq)
 {
-	struct json_object *jsState = json_object_new_object();
-	struct json_object *jsReported = json_object_new_object();
+	struct json_object *jsState = json_object_new_object() ;
+	struct json_object *jsReported = json_object_new_object() ;
 	// struct json_object *jsController = json_object_new_object();s
 
 	// json_object_object_add(jsController, "controller", main_controller_object());
-	json_object_object_add(jsReported, "reported", main_controller_object());
-	json_object_object_add(jsState, "state", jsReported);
+	json_object_object_add(jsReported, "reported", main_controller_object()) ;
+	json_object_object_add(jsState, "state", jsReported) ;
 
 	// char *jsonString = (char *) malloc(4096 * sizeof(char));
-	char *jsonString = json_object_to_json_string(jsState);
+	char *jsonString = json_object_to_json_string(jsState) ;
 
-	int msq_pub = mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0);
+	int msq_pub = mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(jsonString), jsonString, 0, 0) ;
 
 	// while (json_object_put(jsController)) {};
-	while (json_object_put(jsReported))
-	{
-	};
-	while (json_object_put(jsState))
-	{
-	};
+	while(json_object_put(jsReported))
+{
+} ;
+while(json_object_put(jsState))
+{
+} ;
 }
 
 void build_event_object(struct mosquitto *mosq, int modulePosition, int channelPosition, int channelValue)
 {
 
-	char *chn = (char *)malloc(10);
-	char *mod = (char *)malloc(10);
+	char *chn = (char *)malloc(10) ;
+	char *mod = (char *)malloc(10) ;
 
-	strcpy(mod, "module");
-	char *mi;
-	itoa((modulePosition + 1), mi, 10);
-	strcat(mod, mi);
+	strcpy(mod, "module") ;
+	char *mi ;
+	itoa((modulePosition + 1), mi, 10) ;
+	strcat(mod, mi) ;
 
-	strcpy(chn, "channel");
-	char *ch;
-	itoa((channelPosition + 1), ch, 10);
-	strcat(chn, ch);
+	strcpy(chn, "channel") ;
+	char *ch ;
+	itoa((channelPosition + 1), ch, 10) ;
+	strcat(chn, ch) ;
 
-	struct json_object *jsonMain = json_object_new_object();
-	struct json_object *jsonState = json_object_new_object();
-	struct json_object *jsonReported = json_object_new_object();
-	struct json_object *jsonController = json_object_new_object();
-	struct json_object *jsonModules = json_object_new_object();
-	struct json_object *jsonModule = json_object_new_object();
-	struct json_object *jsonChannels = json_object_new_object();
-	struct json_object *jsonChannel = json_object_new_object();
+	struct json_object *jsonMain = json_object_new_object() ;
+	struct json_object *jsonState = json_object_new_object() ;
+	struct json_object *jsonReported = json_object_new_object() ;
+	struct json_object *jsonController = json_object_new_object() ;
+	struct json_object *jsonModules = json_object_new_object() ;
+	struct json_object *jsonModule = json_object_new_object() ;
+	struct json_object *jsonChannels = json_object_new_object() ;
+	struct json_object *jsonChannel = json_object_new_object() ;
 	//*jsonState, *jsonReported, *jsonController, *jsonModules, *jsonModule, * jsonChannels, *jsonChannel = json_object_new_object();
 
 	// build the channel object
-	if (!strcmp(controller.modules[modulePosition].type, "DI"))
-	{
-		json_object_object_add(jsonChannel, "value", json_object_new_boolean(channelValue));
-	}
-	if (!strcmp(controller.modules[modulePosition].type, "DO"))
-	{
-		json_object_object_add(jsonChannel, "value", json_object_new_boolean(channelValue));
-	}
-	if (!strcmp(controller.modules[modulePosition].type, "AI"))
-	{
-		json_object_object_add(jsonChannel, "value", json_object_new_int(channelValue));
-	}
-	if (!strcmp(controller.modules[modulePosition].type, "AO"))
-	{
-		json_object_object_add(jsonChannel, "value", json_object_new_int(channelValue));
-	}
-
-	// build the module object
-	json_object_object_add(jsonChannels, chn, json_object_get(jsonChannel));
-
-	json_object_object_add(jsonModule, "channels", json_object_get(jsonChannels));
-
-	// add this to the reported object
-	json_object_object_add(jsonModules, mod, json_object_get(jsonModule));
-
-	// add this to the reported object
-	json_object_object_add(jsonController, "node_id", json_object_new_string(controller.nodeId));
-	json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)); // faulting here?? changed this to int
-	json_object_object_add(jsonController, "modules", json_object_get(jsonModules));
-
-	// add this to the reported object
-	json_object_object_add(jsonReported, "controller", json_object_get(jsonController));
-
-	// add the module to the reported
-	json_object_object_add(jsonState, "reported", json_object_get(jsonReported));
-
-	// add the reported to the state
-	json_object_object_add(jsonMain, "state", json_object_get(jsonState));
-
-	char *event_string = json_object_to_json_string(jsonMain);
-
-	int pub_resp = mosquitto_publish(mosq, NULL, this_config.event_pub_topic, strlen(event_string), event_string, 0, 0);
-
-	free(mod);
-	free(chn);
-
-	// free the owner
-	json_object_put(jsonChannel);
-	json_object_put(jsonChannels);
-	json_object_put(jsonModule);
-	json_object_put(jsonModules);
-	json_object_put(jsonController);
-	json_object_put(jsonReported);
-	json_object_put(jsonState);
-	json_object_put(jsonMain);
+	if(!strcmp(controller.modules[modulePosition].type, "DI"))
+{
+	json_object_object_add(jsonChannel, "value", json_object_new_boolean(channelValue)) ;
+}
+if(!strcmp(controller.modules[modulePosition].type, "DO"))
+{
+	json_object_object_add(jsonChannel, "value", json_object_new_boolean(channelValue)) ;
+}
+if(!strcmp(controller.modules[modulePosition].type, "AI"))
+{
+	json_object_object_add(jsonChannel, "value", json_object_new_int(channelValue)) ;
+}
+if(!strcmp(controller.modules[modulePosition].type, "AO"))
+{
+	json_object_object_add(jsonChannel, "value", json_object_new_int(channelValue)) ;
 }
 
-int parse_mqtt(struct mosquitto *mosq, char *message)
+// build the module object
+json_object_object_add(jsonChannels, chn, json_object_get(jsonChannel)) ;
+
+json_object_object_add(jsonModule, "channels", json_object_get(jsonChannels)) ;
+
+// add this to the reported object
+json_object_object_add(jsonModules, mod, json_object_get(jsonModule)) ;
+
+// add this to the reported object
+json_object_object_add(jsonController, "node_id", json_object_new_string(controller.nodeId)) ;
+json_object_object_add(jsonController, "switch_state", json_object_new_int(controller.switch_state)) ; // faulting here?? changed this to int
+json_object_object_add(jsonController, "modules", json_object_get(jsonModules)) ;
+
+// add this to the reported object
+json_object_object_add(jsonReported, "controller", json_object_get(jsonController)) ;
+
+// add the module to the reported
+json_object_object_add(jsonState, "reported", json_object_get(jsonReported)) ;
+
+// add the reported to the state
+json_object_object_add(jsonMain, "state", json_object_get(jsonState)) ;
+
+char *event_string = json_object_to_json_string(jsonMain) ;
+
+int pub_resp = mosquitto_publish(mosq, NULL, this_config.event_pub_topic, strlen(event_string), event_string, 0, 0) ;
+
+free(mod) ;
+free(chn) ;
+
+// free the owner
+json_object_put(jsonChannel) ;
+json_object_put(jsonChannels) ;
+json_object_put(jsonModule) ;
+json_object_put(jsonModules) ;
+json_object_put(jsonController) ;
+json_object_put(jsonReported) ;
+json_object_put(jsonState) ;
+json_object_put(jsonMain) ;
+}
+
+void parse_input_channel_data(struct mosquitto *mosq, struct json_object *jObj, int iModules)
+{
+	struct json_object *jLbl, *jDb;
+	char *chn;
+	chn = (char *)malloc(10 * sizeof(char));
+	
+	for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
+	{
+		strcpy(chn, "channel");
+		char *ch;
+		itoa((iChannels + 1), &ch, 10);
+		strcat(chn, &ch);
+
+		// find the object
+		if (json_object_object_get_ex(jObj, chn, &jObj))
+		{
+			if (controller.modules[iModules].mtype == aim)
+			{
+				if (json_object_object_get_ex(jObj, "deadband", &jDb)) 
+				{
+					aiMod[controller.modules[iModules].typeIndex].inData[iChannels].deadband = json_object_get_int(jDb);
+				}
+				
+				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				{
+					aiMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+				}
+			}
+			
+			if ((controller.modules[iModules].mtype == dim) | (controller.modules[iModules].mtype == dxm))
+			{
+				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				{
+					diMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+				}
+			}
+			break;
+		}
+	}
+	free(chn);
+	json_object_put(jLbl);
+	json_object_put(jDb);
+}
+
+void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj, int iModules)
+{
+	int channelCommand;
+	struct json_object *jLbl, *jDb, *jVal;
+	char *chn;
+	chn = (char *)malloc(10 * sizeof(char));
+	
+	for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
+	{
+		strcpy(chn, "channel");
+		char *ch;
+		itoa((iChannels + 1), &ch, 10);
+		strcat(chn, &ch);
+
+		// find the object
+		if (json_object_object_get_ex(jObj, chn, &jObj))
+		{
+			if (controller.modules[iModules].mtype == aom)
+			{
+				if (json_object_object_get_ex(jObj, "deadband", &jDb)) 
+				{
+					aoMod[controller.modules[iModules].typeIndex].outData[iChannels].deadband = json_object_get_int(jDb);
+				}
+				
+				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				{
+					aiMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+				}
+				
+				if (json_object_object_get_ex(jObj, "value", &jVal)) 
+				{
+					channelCommand = json_object_get_int(jVal);
+					kbus_write(mosq, controller, iModules, iChannels, channelCommand);
+				}
+			}
+			
+			if ((controller.modules[iModules].mtype == dom) | (controller.modules[iModules].mtype == dxm))
+			{
+				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				{
+					doMod[controller.modules[iModules].typeIndex].outData[iChannels].label = json_object_get_string(jLbl);
+				}
+				
+				if (json_object_object_get_ex(jObj, "value", &jVal)) 
+				{
+					channelCommand = json_object_get_int(jVal);
+					kbus_write(mosq, controller, iModules, iChannels, channelCommand);
+				}
+			}
+			break;
+		}
+	}
+	
+	// free all the things
+	free(chn);
+	json_object_put(jLbl);
+	json_object_put(jDb);
+	json_object_put(jVal);
+}
+
+
+void parse_process_data(struct mosquitto *mosq, struct json_object *jObj, int iModules)
+{
+	// now the fun task of treating each module different
+	switch (controller.modules[iModules].mtype)
+	{
+		// inputs only
+	case dim:
+	case aim:
+		if (json_object_object_get_ex(jObj, "inputs", &jObj))	
+		{
+			parse_input_channel_data(mosq, jObj, iModules);
+		}
+		break;
+							
+		// outputs only
+	case dom:
+	case aom:
+		if (json_object_object_get_ex(jObj, "outputs", &jObj))	
+		{
+			parse_process_data(mosq, jObj, iModules);
+		}
+		break;
+							
+		// in / out module	
+	case dxm:
+		if (json_object_object_get_ex(jObj, "inputs", &jObj))	
+		{
+			parse_process_data(mosq, jObj, iModules);
+		} 
+		if (json_object_object_get_ex(jObj, "outputs", &jObj))	
+		{
+			parse_process_data(mosq, jObj, iModules);
+		}
+		break;
+							
+		// specialty
+	case spm:
+		// going to deal with this later
+		break;
+							
+	default:
+		break;
+	}
+}
+
+void parse_module(struct mosquitto *mosq, struct json_object *jObj)
+{ 
+	char *mod = (char *)malloc(10 * sizeof(char));
+	
+	for (int iModules = 0; iModules < controller.number_of_modules; iModules++)
+	{
+		mod = (char *)malloc(10 * sizeof(char));
+
+		strcpy(mod, "module");
+		char *mi;
+		itoa((iModules + 1), &mi, 10);
+		strcat(mod, &mi);
+					
+		// find the object
+		if (json_object_object_get_ex(jObj, mod, &jObj))
+		{
+			if (json_object_object_get_ex(jObj, "process_data", &jObj))	
+			{
+				parse_process_data(mosq, jObj, iModules);
+			}
+		}
+	}
+	free(mod);
+	return;
+}
+
+void parse_mqtt(struct mosquitto *mosq, char *message)
+{ 
+	// step through from the main command
+	struct json_object *jObj;
+	struct json_object *parsed_json = json_tokener_parse(message);
+	
+	if (json_object_object_get_ex(parsed_json, "state", &jObj))
+	{
+		if (json_object_object_get_ex(jObj, "desired", &jObj))
+		{
+			if (json_object_object_get_ex(jObj, "modules", &jObj))
+			{
+				parse_module(mosq, jObj);			
+			}
+		}
+	}
+}
+
+/*
+void parse_mqtt(struct mosquitto *mosq, char *message)
+{ 
+	struct json_object *jsonState, *jsonDesired, *jsonController, *jsonModules, *jsonModule;
+	
+	char *mod = (char *)malloc(10 * sizeof(char));
+	
+	// get the main json object
+	struct json_object *parsed_json = json_tokener_parse(message);
+
+	// start checking the json objects
+	if (json_object_object_get_ex(parsed_json, "state", &jsonState))
+	{
+		if (json_object_object_get_ex(jsonState, "desired", &jsonDesired))
+		{
+			if (json_object_object_get_ex(jsonDesired, "modules", &jsonModules))
+			{
+				for (int iModules = 0; iModules < controller.number_of_modules; iModules++)
+				{
+					mod = (char *)malloc(10 * sizeof(char));
+
+					strcpy(mod, "module");
+					char *mi;
+					itoa((iModules + 1), &mi, 10);
+					strcat(mod, &mi);
+					
+					// find the object
+					if (json_object_object_get_ex(jsonModules, mod, &jsonModule))
+					{
+						
+					}
+				}
+			}
+		}
+	}
+}
+
+int xx_parse_mqtt(struct mosquitto *mosq, char *message)
 {
 
 	struct channel_command channelCmd;
@@ -462,7 +724,6 @@ int parse_mqtt(struct mosquitto *mosq, char *message)
 		{
 			if (json_object_object_get_ex(jsonDesired, "modules", &jsonModules))
 			{
-
 				for (int iModules = 0; iModules < controller.number_of_modules; iModules++)
 				{
 					mod = (char *)malloc(10 * sizeof(char));
@@ -475,8 +736,32 @@ int parse_mqtt(struct mosquitto *mosq, char *message)
 					// find the object
 					if (json_object_object_get_ex(jsonModules, mod, &jsonModule))
 					{
+						// now the fun task of treating each module different
+						switch (controller.modules[iModules].mtype)
+						{
+						// inputs only
+						case dim:
+						case aim:
+							break;
+							
+						// outputs only
+						case dom:
+						case aom:
+							break;
+							
+						// in / out module	
+						case dxm:
+							break;
+							
+						// specialty
+						case spm:
+							break;
+							
+						default:
+							break;
+						}
 
-						// found the channel, record the module position
+						// found the module index, record the module position
 						channelCmd.module = iModules;
 
 						if (json_object_object_get_ex(jsonModule, "channels", &jsonChannels))
@@ -485,7 +770,6 @@ int parse_mqtt(struct mosquitto *mosq, char *message)
 							// search for the channels
 							for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
 							{
-								// chn = (char*)malloc(10 * sizeof(char));
 
 								strcpy(chn, "channel");
 								char *ch;
@@ -515,64 +799,30 @@ int parse_mqtt(struct mosquitto *mosq, char *message)
 								}
 							}
 						}
-						else if (json_object_object_get_ex(jsonChannel, "label", &jsonLabel))
-						{
-
-						}
 					}
 				}
 			}
 		}
 	}
-}
 
-// free the owners
-free(chn);
-free(mod);
-while (json_object_put(jsonLabel))
-{
-};
-while (json_object_put(jsonValue))
-{
-};
-while (json_object_put(jsonChannel))
-{
-};
-while (json_object_put(jsonChannels))
-{
-};
-while (json_object_put(jsonModule))
-{
-};
-while (json_object_put(jsonModules))
-{
-};
-while (json_object_put(jsonController))
-{
-};
-while (json_object_put(jsonDesired))
-{
-};
-while (json_object_put(jsonState))
-{
-};
-while (json_object_put(parsed_json))
-{
-};
-/*json_object_put(jsonLabel);
-json_object_put(jsonValue);
-json_object_put(jsonChannel);
-json_object_put(jsonChannels);
-json_object_put(jsonModule);
-json_object_put(jsonModules);
-json_object_put(jsonController);
-json_object_put(jsonDesired);
-json_object_put(jsonState);
-json_object_put(parsed_json);*/
+	// free the owners
+	free(chn);
+	free(mod);
+	while (json_object_put(jsonLabel))		{	};
+	while (json_object_put(jsonValue))		{	};
+	while (json_object_put(jsonChannel))	{	};
+	while (json_object_put(jsonChannels))	{	};
+	while (json_object_put(jsonModule))		{	};
+	while (json_object_put(jsonModules))	{	};
+	while (json_object_put(jsonController))	{	};
+	while (json_object_put(jsonDesired))	{	};
+	while (json_object_put(jsonState))		{	};
+	while (json_object_put(parsed_json))	{	};
 
-// return error
-return 0;
+	// return error
+	return 0;
 }
+*/
 
 char *build_error_object(bool error, struct node controller, struct prog_config this_config, char *error_msg)
 {
@@ -585,7 +835,31 @@ char *build_error_object(bool error, struct node controller, struct prog_config 
 	return return_string;
 }
 
-void json_parse_assign_label(int iModule, int iChannel)
+void json_parse_assign_label(int iModule, int iChannel, char *label)
 {
-	switch (controller.modules)
+	switch (controller.modules[iModule].mtype)
+	{
+		// specialty modules
+	case spm:
+		if ((controller.modules[iModule].pn == 494) || (controller.modules[iModule].pn == 495))
+		{
+			pmMod[controller.modules[iModule].typeIndex].label = label;	
+		}
+		break;
+		
+	case dim:
+		diMod[iModule].inData[iChannel].label = label;
+		break;
+		
+	case dom:
+		doMod[iModule].outData[iChannel].label = label;
+		break;
+		
+	case dxm:
+		diMod[iModule].inData[iChannel].label = label;
+		break;
+		
+	default:
+		break;
+	}
 }
