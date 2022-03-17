@@ -33,6 +33,7 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
 void connect_callback(struct mosquitto *mosq, void *obj, int result)
 {
+	mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
 	log_execution("MQTT Broker Connection Success", 0);
 }
 

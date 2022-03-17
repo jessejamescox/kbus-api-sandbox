@@ -103,8 +103,6 @@ int main(int argc, char *argv[])
 
 		rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
 
-		mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
-
 		if (kbusIsInit)
 		{
 			// scan the kbus
@@ -142,15 +140,6 @@ int main(int argc, char *argv[])
 				}
 
 				log_execution("switch event: STOP", 0);
-				// disconnect from the broker 
-				//mosquitto_disconnect(mosq);
-
-				// reset the mqtt objects
-				//mosquitto_destroy(mosq);
-
-				// decrement the lib ref
-				//mosquitto_lib_cleanup();
-				// reset the init
 				initialized = 0;
 				iCounts = 0;
 			}
@@ -199,7 +188,7 @@ int main(int argc, char *argv[])
 					}
 					else // give the connection some time to stabilize
 					{
-						if (iCounts >= 100)
+						if (iCounts >= 50)
 						{
 							run = 1;
 						}

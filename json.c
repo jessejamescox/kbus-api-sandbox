@@ -470,6 +470,8 @@ json_object_put(jsonState) ;
 json_object_put(jsonMain) ;
 }
 
+
+
 void parse_input_channel_data(struct mosquitto *mosq, struct json_object *jObj, int iModules)
 {
 	struct json_object *jLbl, *jDb;
@@ -478,48 +480,58 @@ void parse_input_channel_data(struct mosquitto *mosq, struct json_object *jObj, 
 	
 	for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
 	{
+		
 		strcpy(chn, "channel");
 		char *ch;
 		itoa((iChannels + 1), &ch, 10);
 		strcat(chn, &ch);
+		
+		struct json_object *jH = jObj;
 
 		// find the object
-		if (json_object_object_get_ex(jObj, chn, &jObj))
+		if (json_object_object_get_ex(jH, chn, &jH))
 		{
 			if (controller.modules[iModules].mtype == aim)
 			{
-				if (json_object_object_get_ex(jObj, "deadband", &jDb)) 
+				if (json_object_object_get_ex(jH, "deadband", &jDb)) 
 				{
 					aiMod[controller.modules[iModules].typeIndex].inData[iChannels].deadband = json_object_get_int(jDb);
 				}
 				
-				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
-					aiMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+					char *label = json_object_get_string(jLbl);
+					memcpy(aiMod[controller.modules[iModules].typeIndex].inData[iChannels].label, label, strlen(label) + 1);
 				}
+				break;
 			}
 			
 			if ((controller.modules[iModules].mtype == dim) | (controller.modules[iModules].mtype == dxm))
 			{
-				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				
+				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
-					diMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+					char *label = json_object_get_string(jLbl);
+					memcpy(diMod[controller.modules[iModules].typeIndex].inData[iChannels].label, label, strlen(label) + 1);
 				}
+				break;
 			}
-			break;
 		}
+		json_object_put(jH);
 	}
 	free(chn);
 	json_object_put(jLbl);
 	json_object_put(jDb);
+	json_object_put(jObj);
+	
+	return;
 }
 
 void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj, int iModules)
 {
 	int channelCommand;
-	struct json_object *jLbl, *jDb, *jVal;
-	char *chn;
-	chn = (char *)malloc(10 * sizeof(char));
+	struct json_object *jLbl, *jVal;
+	char *chn = (char *)malloc(10 * sizeof(char));
 	
 	for (int iChannels = 0; iChannels < controller.modules[iModules].channelCount; iChannels++)
 	{
@@ -527,37 +539,60 @@ void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj,
 		char *ch;
 		itoa((iChannels + 1), &ch, 10);
 		strcat(chn, &ch);
+		
+		struct json_object *jH = jObj;
 
 		// find the object
-		if (json_object_object_get_ex(jObj, chn, &jObj))
+		if (json_object_object_get_ex(jH, chn, &jH))
 		{
 			if (controller.modules[iModules].mtype == aom)
 			{
-				if (json_object_object_get_ex(jObj, "deadband", &jDb)) 
+				struct json_object *jDb;
+				if (json_object_object_get_ex(jH, "deadband", &jDb)) 
 				{
 					aoMod[controller.modules[iModules].typeIndex].outData[iChannels].deadband = json_object_get_int(jDb);
 				}
 				
-				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
-					aiMod[controller.modules[iModules].typeIndex].inData[iChannels].label = json_object_get_string(jLbl);
+					aoMod[controller.modules[iModules].typeIndex].outData[iChannels].label = json_object_get_string(jLbl);
 				}
 				
-				if (json_object_object_get_ex(jObj, "value", &jVal)) 
+				if (json_object_object_get_ex(jH, "value", &jVal)) 
+				{
+					channelCommand = json_object_get_int(jVal);
+					kbus_write(mosq, controller, iModules, iChannels, channelCommand);
+				}
+				
+				json_object_put(jDb);
+			}
+			
+			if (controller.modules[iModules].mtype == dom)
+			{
+				if (json_object_object_get_ex(jH, "label", &jLbl)) 
+				{
+					char *label = json_object_get_string(jLbl);
+					printf("%s\n", label);
+					memcpy(doMod[controller.modules[iModules].typeIndex].outData[iChannels].label, label, strlen(label) + 1);
+				}
+				
+				if (json_object_object_get_ex(jH, "value", &jVal)) 
 				{
 					channelCommand = json_object_get_int(jVal);
 					kbus_write(mosq, controller, iModules, iChannels, channelCommand);
 				}
 			}
 			
-			if ((controller.modules[iModules].mtype == dom) | (controller.modules[iModules].mtype == dxm))
+			if (controller.modules[iModules].mtype == dxm)
 			{
-				if (json_object_object_get_ex(jObj, "label", &jLbl)) 
+				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
-					doMod[controller.modules[iModules].typeIndex].outData[iChannels].label = json_object_get_string(jLbl);
+					char *label = json_object_get_string(jLbl);
+					printf("%s\n", label);
+					memcpy(dxMod[controller.modules[iModules].typeIndex].outData[iChannels].label, label, strlen(label) + 1);
 				}
 				
-				if (json_object_object_get_ex(jObj, "value", &jVal)) 
+				if (json_object_object_get_ex(jH, "value", &jVal)) 
 				{
 					channelCommand = json_object_get_int(jVal);
 					kbus_write(mosq, controller, iModules, iChannels, channelCommand);
@@ -565,13 +600,16 @@ void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj,
 			}
 			break;
 		}
+		json_object_put(jH);
 	}
 	
 	// free all the things
 	free(chn);
-	json_object_put(jLbl);
-	json_object_put(jDb);
 	json_object_put(jVal);
+	json_object_put(jLbl);
+	json_object_put(jObj);
+	
+	return;
 }
 
 
@@ -594,7 +632,7 @@ void parse_process_data(struct mosquitto *mosq, struct json_object *jObj, int iM
 	case aom:
 		if (json_object_object_get_ex(jObj, "outputs", &jObj))	
 		{
-			parse_process_data(mosq, jObj, iModules);
+			parse_output_channel_data(mosq, jObj, iModules);
 		}
 		break;
 							
@@ -602,11 +640,11 @@ void parse_process_data(struct mosquitto *mosq, struct json_object *jObj, int iM
 	case dxm:
 		if (json_object_object_get_ex(jObj, "inputs", &jObj))	
 		{
-			parse_process_data(mosq, jObj, iModules);
+			parse_input_channel_data(mosq, jObj, iModules);
 		} 
 		if (json_object_object_get_ex(jObj, "outputs", &jObj))	
 		{
-			parse_process_data(mosq, jObj, iModules);
+			parse_output_channel_data(mosq, jObj, iModules);
 		}
 		break;
 							
@@ -626,21 +664,22 @@ void parse_module(struct mosquitto *mosq, struct json_object *jObj)
 	
 	for (int iModules = 0; iModules < controller.number_of_modules; iModules++)
 	{
-		mod = (char *)malloc(10 * sizeof(char));
-
 		strcpy(mod, "module");
 		char *mi;
 		itoa((iModules + 1), &mi, 10);
 		strcat(mod, &mi);
+		
+		struct json_object *jH = jObj;
 					
 		// find the object
-		if (json_object_object_get_ex(jObj, mod, &jObj))
+		if (json_object_object_get_ex(jH, mod, &jH))
 		{
-			if (json_object_object_get_ex(jObj, "process_data", &jObj))	
+			if (json_object_object_get_ex(jH, "process_data", &jH))	
 			{
-				parse_process_data(mosq, jObj, iModules);
+				parse_process_data(mosq, jH, iModules);
 			}
 		}
+		json_object_put(jH);
 	}
 	free(mod);
 	return;
@@ -649,8 +688,8 @@ void parse_module(struct mosquitto *mosq, struct json_object *jObj)
 void parse_mqtt(struct mosquitto *mosq, char *message)
 { 
 	// step through from the main command
-	struct json_object *jObj;
 	struct json_object *parsed_json = json_tokener_parse(message);
+	struct json_object *jObj;
 	
 	if (json_object_object_get_ex(parsed_json, "state", &jObj))
 	{
@@ -662,6 +701,10 @@ void parse_mqtt(struct mosquitto *mosq, char *message)
 			}
 		}
 	}
+	json_object_put(jObj);
+	json_object_put(parsed_json);
+	
+	return;
 }
 
 /*
