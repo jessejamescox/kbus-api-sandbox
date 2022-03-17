@@ -55,7 +55,6 @@ struct	module
 	uint8_t outChannelCount;
 	uint16_t bitOffsetIn;
 	uint16_t bitOffsetOut;
-	//struct channel channel[16];
 	
 };
 
