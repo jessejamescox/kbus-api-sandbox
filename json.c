@@ -555,7 +555,8 @@ void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj,
 				
 				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
-					aoMod[controller.modules[iModules].typeIndex].outData[iChannels].label = json_object_get_string(jLbl);
+					char *label = json_object_get_string(jLbl);
+					memcpy(aoMod[controller.modules[iModules].typeIndex].outData[iChannels].label, label, strlen(label) + 1);
 				}
 				
 				if (json_object_object_get_ex(jH, "value", &jVal)) 
@@ -572,7 +573,6 @@ void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj,
 				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
 					char *label = json_object_get_string(jLbl);
-					printf("%s\n", label);
 					memcpy(doMod[controller.modules[iModules].typeIndex].outData[iChannels].label, label, strlen(label) + 1);
 				}
 				
@@ -588,7 +588,6 @@ void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj,
 				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
 					char *label = json_object_get_string(jLbl);
-					printf("%s\n", label);
 					memcpy(dxMod[controller.modules[iModules].typeIndex].outData[iChannels].label, label, strlen(label) + 1);
 				}
 				
