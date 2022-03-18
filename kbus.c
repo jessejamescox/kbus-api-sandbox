@@ -163,6 +163,13 @@ int kbus_write_digital(int modulePosition, int channelPosition, bool channelValu
 	doMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
 }
 
+int kbus_write_dxgital(int modulePosition, int channelPosition, bool channelValue){
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBool(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut + channelPosition), channelValue);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
+	dxMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
+}
+
 int kbus_write_analog(int modulePosition, int channelPosition, uint16_t channelValue) {
 	
 	// calcualte the byte offset 
@@ -199,10 +206,6 @@ bool kbus_read_digital(int *i_modules, int *i_channels, struct kbus *kbus)
 	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data 
 	return xOut;
 }
-
-
-
-
 
 int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 {
@@ -249,7 +252,16 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 	
 	controlBytes[0] = 0;
 	controlBytes[2] = NULL;
-	controlBytes[3] = 10;
+	
+	// this register is different for pmm type ¯\_(?)_/¯
+	if (controller.modules[iMod].pn == 494)
+	{
+		controlBytes[3] = 9;
+	}
+	if (controller.modules[iMod].pn == 495)
+	{
+		controlBytes[3] = 10;
+	}
 	
 	// getting the L1 data
 	if ((statusBytes[4] == 4) &
@@ -384,7 +396,7 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 	
 	// read each channel of each module connected
 	for (i_modules = 0; i_modules < kbus->terminalCount; i_modules++) {
-		for (i_channels = 0; i_channels < controller.modules[i_modules].channelCount; i_channels++) {
+		for (i_channels = 0; i_channels < controller.modules[i_modules].inChannelCount; i_channels++) {
 			
 			switch (controller.modules[i_modules].mtype)
 			{
@@ -415,6 +427,11 @@ int kbus_write(struct mosquitto *mosq, struct node controller, int modulePositio
 	{
 	bool writeVal = false;
 	case dxm:
+		if (channelValue != 0) {
+			writeVal = true;
+		}
+		kbus_write_dxgital(modulePosition, channelPosition, writeVal);
+		break;
 	case dom:
 		if (channelValue != 0) {
 			writeVal = true;

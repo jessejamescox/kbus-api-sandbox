@@ -201,6 +201,7 @@ int main(int argc, char *argv[])
 					// do the kbus work
 					kbus_resp = kbus_read(&mosq, &this_config, &kbus); //, controller);
 				
+					printf("%i\n", dxMod[controller.modules[2].typeIndex].outData[0]);
 					
 					usleep(10000);
 				}
@@ -211,8 +212,6 @@ int main(int argc, char *argv[])
 				
 				build_controller_object(mosq);
 				initialized = 1;
-				log_execution("MQTT Broker Connection Success", 0);
-				//set_led(IS_RUNNING);
 			tik = current_timestamp();
 
 			//}

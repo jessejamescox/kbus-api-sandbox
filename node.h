@@ -38,7 +38,6 @@ struct achannel
 struct dchannel
 {
 	bool value;
-	bool error;
 	char *label;
 };
 
