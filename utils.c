@@ -19,14 +19,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <string.h>
+#include <sys/time.h>
 
 // Function to swap two numbers
 void swap(char *x, char *y) {
 	char t = *x; *x = *y; *y = t;
 }
  
-// Function to reverse `buffer[i…j]`
+// Function to reverse `buffer[iï¿½j]`
 char* reverse(char *buffer, int i, int j)
 {
 	while (i < j) {
@@ -80,14 +84,26 @@ char* itoa(int value, char* buffer, int base)
 	return reverse(buffer, 0, i - 1);
 }
 
-float bytes_to_float(__uint8_t hsb, __uint8_t hmsb, __uint8_t lmsb, __uint8_t lsb)
+char *return_default_labe(int mp, char * dir, int cp)
 {
-	float f;
-	__uint8_t b[4];
-	b[0] = lsb;
-	b[1] = lmsb;
-	b[2] = hmsb;
-	b[3] = hsb;
-	memcpy(&f, &b, sizeof(f));
-	return f;
+	char *out;
+	asprintf(&out, "m%i%s%i", (mp + 1),dir, (cp + 1));
+	return out;
+}
+
+uint32_t get_time_millis(void)
+{
+	uint32_t uiNow;
+	struct timeval tvNow;
+	gettimeofday(&tvNow, NULL);
+	uiNow = tvNow.tv_usec;
+	return uiNow;
+}
+
+unsigned long current_timestamp() {
+	struct timeval te; 
+	gettimeofday(&te, NULL); // get current time
+	long long milliseconds = te.tv_sec * 1000LL + te.tv_usec / 1000; // calculate milliseconds
+	// printf("milliseconds: %lld\n", milliseconds);
+	return milliseconds;
 }

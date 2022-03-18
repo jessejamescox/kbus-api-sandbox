@@ -76,7 +76,7 @@ error:
 	$(error Invalid configuration, please check your inputs)
 endif
 
-SOURCEFILES := get_config.c json.c kbus-api.c kbus.c led.c logger.c mqtt.c node.c switch.c utils.c
+SOURCEFILES := get_config.c json.c kbus-api.c kbus.c led.c logger.c modutils.c mqtt.c node.c switch.c utils.c
 EXTERNAL_LIBS := 
 EXTERNAL_LIBS_COPIED := $(foreach lib, $(EXTERNAL_LIBS),$(BINARYDIR)/$(notdir $(lib)))
 

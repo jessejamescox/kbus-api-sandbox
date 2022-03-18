@@ -20,13 +20,8 @@
 #include <string.h>
 #include <unistd.h>
 #include "kbus-api.h"
-//#include "node.h"
-//#include "logger.h"
 #include "get_config.h"
 #include "json.h"
-//#include "kbus.h"
-
-//char *sub_topic;
 
 struct prog_config this_config;
 
@@ -38,5 +33,11 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 
 void connect_callback(struct mosquitto *mosq, void *obj, int result)
 {
-	printf("connect callback, rc=%d\n", result);
+	mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
+	log_execution("MQTT Broker Connection Success", 0);
+}
+
+void disconnect_callback(struct mosquitto *mosq, void *obj, int result)
+{
+	log_execution("MQTT Broker Connection Disconnected", 0);
 }

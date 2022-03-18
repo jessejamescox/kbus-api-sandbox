@@ -18,6 +18,14 @@
 
 #define MAX_CALLBACKS 32
 
+#define LOGFILE "/etc/kbus-daemon/logs/runtime.log"
+
+enum loglvl
+{
+	trace = 0,
+	error = 1
+};
+
 typedef struct {
 	log_LogFn fn;
 	void *udata;
@@ -181,4 +189,24 @@ void log_log(int level, const char *file, int line, const char *fmt, ...) {
 	}
 
 	unlock();
+}
+
+void log_execution(char *msg, int level)
+{
+	FILE *f = fopen(LOGFILE, "a");
+	log_set_level(0);
+	log_add_fp(f, 0);
+	switch (level)
+	{
+	case 0:
+		log_info(msg);
+		break;
+	case 1:
+		log_trace(msg);
+		break;
+	case 2:
+		log_error(msg);
+		break;
+	}
+	fclose(f);
 }

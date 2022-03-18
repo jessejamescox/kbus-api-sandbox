@@ -16,6 +16,7 @@
 #include <dal/adi_application_interface.h>
 #include <ldkc_kbus_information.h>
 #include <ldkc_kbus_register_communication.h>
+#include <math.h>
 
 #include "kbus.h"
 #include "kbus-api.h"
@@ -24,16 +25,40 @@
 #include "json.h"
 #include "get_config.h"
 
-#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
+typedef union {
+	float f;
+	unsigned int h;
+} hexfloat;
+
+float bytes_to_float(unsigned int in)
+{
+	hexfloat hf;
+	hf.h = in;
+	float f = hf.f;
+	printf("%f\n", f);
+	return f;
+}
+
+#define CHK_BIT(var,pos) ((var) &   (1<<(pos)))
+#define SET_BIT(var,pos) ((var) |=  (1<<(pos)))
+#define CLR_BIT(var,pos) ((var) &= ~(1<<(pos)))
+#define FLP_BIT(var,pos) ((var) ^=  (1<<(pos)))
 
 struct node controllerLast;
 
 tApplicationDeviceInterface *adi;
 struct kbus kbus;
 
-//struct node controller;
+// holding arrays for IO modules
+struct pmMod pmMod[MAXPMMCOUNT];
+struct diMod diMod[MAXDIGCOUNT];
+struct doMod doMod[MAXDIGCOUNT];
+struct dxMod dxMod[MAXDIGCOUNT];
+struct aiMod aiMod[MAXALGCOUNT];
+struct aoMod aoMod[MAXALGCOUNT];
 
 bool initState = true;
+
 
 int kbus_init(struct kbus *kbus) {
 	//, tApplicationDeviceInterface *adi) {
@@ -131,6 +156,44 @@ int kbus_init(struct kbus *kbus) {
 	}
 }
 
+int kbus_write_digital(int modulePosition, int channelPosition, bool channelValue) {
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBool(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut + channelPosition), channelValue);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
+	doMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
+}
+
+int kbus_write_dxgital(int modulePosition, int channelPosition, bool channelValue){
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBool(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut + channelPosition), channelValue);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
+	dxMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
+}
+
+int kbus_write_analog(int modulePosition, int channelPosition, uint16_t channelValue) {
+	
+	// calcualte the byte offset 
+	//int byteOffset;// = controller;
+	int byteOffset = ((controller.modules[modulePosition].bitOffsetOut / 8) + (channelPosition * 2)) ;
+	
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, byteOffset, 2, (uint16_t *)  &channelValue);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
+	aoMod[controller.modules[modulePosition].typeIndex].outData[channelPosition].value = channelValue;
+}
+
+int kbus_write_pmm(int modulePosition, uint8_t outdata[8])
+{	
+	//uint8_t *outHold = &outdata; 
+	int byteOffset = (controller.modules[modulePosition].bitOffsetOut / 8);
+	// now send the request
+	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
+	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, byteOffset, 8, (uint8_t *)  &outdata[0]);
+	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);
+	return 0;
+}
+
+
 bool kbus_read_digital(int *i_modules, int *i_channels, struct kbus *kbus)
 {
 	int iMod =  i_modules;
@@ -146,17 +209,163 @@ bool kbus_read_digital(int *i_modules, int *i_channels, struct kbus *kbus)
 
 int kbus_read_analog(int *i_modules, int *i_channels, struct kbus *kbus)
 {
-	int iMod =  i_modules;
-	int iChan = i_channels;
+	uint8_t iMod =  i_modules;
+	uint8_t iChan = i_channels;
 	
 	int xOut;
 	// read inputs by channel		            
 	int byteOffset = ((controller.modules[iMod].bitOffsetIn / 8) + (iChan * 2));
 	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
-	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &controller.modules[iMod].channel[iChan].value);
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 2, (uint16_t *) &xOut);
 	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
 	return xOut;
 }
+
+uint8_t *kbus_read_bytes(int *i_modules, struct kbus *kbus, uint8_t indata[24])
+{
+	uint8_t iMod =  i_modules;
+	
+	// read inputs by channel		            
+	int byteOffset = ((controller.modules[iMod].bitOffsetIn / 8));
+	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 24, (uint8_t *) &indata[0]);
+	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
+}
+
+
+void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
+{
+	uint8_t iMod = i_modules;
+	uint8_t iTi = controller.modules[iMod].typeIndex;
+	
+	uint8_t statusBytes[8] = { 0 }; // = { 0 };// = (uint8_t *) malloc(24);
+	uint32_t dataRegs[4] = { 0 };
+	
+	uint8_t controlBytes[8] = { 0 }; // = (uint8_t *) malloc(24);
+	
+	// read 24 byte message from pmm pi            
+	int byteOffset = (controller.modules[iMod].bitOffsetIn / 8);
+	adi->ReadStart(kbus->kbusDeviceId, kbus->taskId); // lock PD-In data 
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, byteOffset, 8, (uint8_t *) &statusBytes[0]);
+	adi->ReadBytes(kbus->kbusDeviceId, kbus->taskId, (byteOffset + 8), 16, (uint32_t *) &dataRegs[0]);
+	adi->ReadEnd(kbus->kbusDeviceId, kbus->taskId); // unlock PD-In data
+	
+	controlBytes[0] = 0;
+	controlBytes[2] = NULL;
+	
+	// this register is different for pmm type ¯\_(?)_/¯
+	if (controller.modules[iMod].pn == 494)
+	{
+		controlBytes[3] = 9;
+	}
+	if (controller.modules[iMod].pn == 495)
+	{
+		controlBytes[3] = 10;
+	}
+	
+	// getting the L1 data
+	if ((statusBytes[4] == 4) &
+		(statusBytes[5] == 1) & 
+		(statusBytes[6] == 7) &
+		(statusBytes[7] == 16))
+	{
+		
+		pmMod[iTi].L1.measuredVolts		= dataRegs[0];
+		pmMod[iTi].L1.measuredAmps		= dataRegs[1];
+		pmMod[iTi].L1.measuredPower		= dataRegs[2];
+		pmMod[iTi].L1.measuredFrequency = dataRegs[3];
+		
+		pmMod[iTi].L1.errorUnderVolts		= CHK_BIT(statusBytes[2], 1);
+		pmMod[iTi].L1.errorCurrentRange		= CHK_BIT(statusBytes[2], 2);
+		pmMod[iTi].L1.errorVoltsRange		= CHK_BIT(statusBytes[2], 3);
+		pmMod[iTi].L1.errorZeroCross		= CHK_BIT(statusBytes[2], 4);
+		pmMod[iTi].L1.errorOverCurrent		= CHK_BIT(statusBytes[2], 5);
+		pmMod[iTi].L1.errorFieldCCW			= CHK_BIT(statusBytes[2], 6);
+		pmMod[iTi].L1.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
+			
+		controlBytes[1] = 1; // query L2
+		controlBytes[4] = 5;
+		controlBytes[5] = 2;
+		controlBytes[6] = 8;
+		controlBytes[7] = 17;
+	}
+	
+	// getting the L2 data
+	else if((statusBytes[4] == 5) &
+		(statusBytes[5] == 2) &
+		(statusBytes[6] == 8) &
+		(statusBytes[7] == 17))
+	{
+		pmMod[iTi].L2.measuredVolts		= dataRegs[0];
+		pmMod[iTi].L2.measuredAmps		= dataRegs[1];
+		pmMod[iTi].L2.measuredPower		= dataRegs[2];
+		pmMod[iTi].L2.measuredFrequency = dataRegs[3];
+		
+		pmMod[iTi].L2.errorUnderVolts		= CHK_BIT(statusBytes[2], 1);
+		pmMod[iTi].L2.errorCurrentRange		= CHK_BIT(statusBytes[2], 2);
+		pmMod[iTi].L2.errorVoltsRange		= CHK_BIT(statusBytes[2], 3);
+		pmMod[iTi].L2.errorZeroCross		= CHK_BIT(statusBytes[2], 4);
+		pmMod[iTi].L2.errorOverCurrent		= CHK_BIT(statusBytes[2], 5);
+		pmMod[iTi].L2.errorFieldCCW			= CHK_BIT(statusBytes[2], 6);
+		pmMod[iTi].L2.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
+			
+		controlBytes[1] = 2; // query L3
+		controlBytes[4] = 6;
+		controlBytes[5] = 3;
+		controlBytes[6] = 9;
+		controlBytes[7] = 18;
+	}
+	
+	// getting the L3 data
+	else if((statusBytes[4] == 6) &
+		(statusBytes[5] == 3) &
+		(statusBytes[6] == 9) &
+		(statusBytes[7] == 18))
+	{
+		pmMod[iTi].L3.measuredVolts		= dataRegs[0];
+		pmMod[iTi].L3.measuredAmps		= dataRegs[1];
+		pmMod[iTi].L3.measuredPower		= dataRegs[2];
+		pmMod[iTi].L3.measuredFrequency = dataRegs[3];
+		
+		pmMod[iTi].L3.errorUnderVolts		= CHK_BIT(statusBytes[2], 1);
+		pmMod[iTi].L3.errorCurrentRange		= CHK_BIT(statusBytes[2], 2);
+		pmMod[iTi].L3.errorVoltsRange		= CHK_BIT(statusBytes[2], 3);
+		pmMod[iTi].L3.errorZeroCross		= CHK_BIT(statusBytes[2], 4);
+		pmMod[iTi].L3.errorOverCurrent		= CHK_BIT(statusBytes[2], 5);
+		pmMod[iTi].L3.errorFieldCCW			= CHK_BIT(statusBytes[2], 6);
+		pmMod[iTi].L3.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
+			
+		controlBytes[1] = 0; // query L3
+		controlBytes[3] = 10; // get AC vals
+		controlBytes[4] = 4;
+		controlBytes[5] = 1;
+		controlBytes[6] = 7;
+		controlBytes[7] = 16;
+	}
+	else
+	{
+		controlBytes[1] = 0; // query L3
+		controlBytes[3] = 10; // get AC vals
+		controlBytes[4] = 4;
+		controlBytes[5] = 1;
+		controlBytes[6] = 7;
+		controlBytes[7] = 16;
+	}
+	
+	// errors
+	pmMod[iTi].L1.errorGeneral = CHK_BIT(statusBytes[0], 0);
+	pmMod[iTi].L2.errorGeneral = CHK_BIT(statusBytes[0], 1);
+	pmMod[iTi].L3.errorGeneral = CHK_BIT(statusBytes[0], 2);	
+	
+	pmMod[iTi].grpError = CHK_BIT(statusBytes[0], 3);
+	pmMod[iTi].genError = CHK_BIT(statusBytes[0], 6);
+	
+	
+	// now send the request
+	kbus_write_pmm(iMod, controlBytes);
+	
+}
+
 
 int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kbus *kbus){//, struct node controller) {
 
@@ -187,64 +396,52 @@ int kbus_read(struct mosquitto *mosq, struct prog_config *this_config, struct kb
 	
 	// read each channel of each module connected
 	for (i_modules = 0; i_modules < kbus->terminalCount; i_modules++) {
-		for (i_channels = 0; i_channels < controller.modules[i_modules].channelCount; i_channels++) {
+		for (i_channels = 0; i_channels < controller.modules[i_modules].inChannelCount; i_channels++) {
 			
-			//int compRespDI = strcmp(controller.modules[i_modules].type, "DI");
-			//if (!compRespDI) {
-			if (!strcmp(controller.modules[i_modules].type, "DI") || (!strcmp(controller.modules[i_modules].type, "DX")))
+			switch (controller.modules[i_modules].mtype)
 			{
-				controller.modules[i_modules].channel[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+			case dim:
+				diMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+				break;
+			case dxm:
+				dxMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_digital(i_modules, i_channels, kbus);
+				break;
+			case aim:
+				aiMod[controller.modules[i_modules].typeIndex].inData[i_channels].value = kbus_read_analog(i_modules, i_channels, kbus);
+				break;
+			case spm:
+				if ((controller.modules[i_modules].pn == 494) || (controller.modules[i_modules].pn == 495))
+				{
+					kbus_read_pmm(i_modules, kbus, &pmMod[controller.modules[i_modules].typeIndex]);
+				}
+				break;
 			}
-	
-			int compRespAI = strcmp(controller.modules[i_modules].type, "AI");
-			if (!compRespAI) 
-			{
-				controller.modules[i_modules].channel[i_channels].value = kbus_read_analog(i_modules, i_channels, kbus);
-			}
-//			if (controller.modules[i_modules].channel[i_channels].value != controllerLast.modules[i_modules].channel[i_channels].value) {
-//				if (!initState) 
-//				{
-//					build_event_object(mosq, controller, i_modules, i_channels, controller.modules[i_modules].channel[i_channels].value);
-//				}
-//				controllerLast.modules[i_modules].channel[i_channels].value = controller.modules[i_modules].channel[i_channels].value;
-//			}
-		} // for channels
-	} // for modules
+		}
+	}
 	return 0;
-}
-
-int kbus_write_digital(int modulePosition, int channelPosition, bool channelValue) {
-	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
-	adi->WriteBool(kbus.kbusDeviceId, kbus.taskId, (controller.modules[modulePosition].bitOffsetOut + channelPosition), channelValue);
-	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
-}
-
-int kbus_write_analog(int modulePosition, int channelPosition, uint16_t channelValue) {
-	adi->WriteStart(kbus.kbusDeviceId, kbus.taskId);
-	adi->WriteBytes(kbus.kbusDeviceId, kbus.taskId, (kbus.terminalDescription[modulePosition].OffsetInput_bits + channelPosition), 2, (uint16_t *)  &channelValue);
-	adi->WriteEnd(kbus.kbusDeviceId, kbus.taskId);  
 }
 
 int kbus_write(struct mosquitto *mosq, struct node controller, int modulePosition, int channelPosition, int channelValue) 
 {
-	
-	if (strcmp(controller.modules[modulePosition].type, "DO") != 0)
+	switch (controller.modules[modulePosition].mtype)
 	{
-		if (strcmp(controller.modules[modulePosition].type, "AO") != 0)
-		{
-			log_error("module is not an output or is not supported");
+	bool writeVal = false;
+	case dxm:
+		if (channelValue != 0) {
+			writeVal = true;
 		}
-		else {
-			kbus_write_analog(modulePosition, channelPosition, channelValue);
-			build_event_object(mosq, controller, modulePosition, channelPosition, channelValue);
-		}
-	}
-	else {
-		bool writeVal = false;
+		kbus_write_dxgital(modulePosition, channelPosition, writeVal);
+		break;
+	case dom:
 		if (channelValue != 0) {
 			writeVal = true;
 		}
 		kbus_write_digital(modulePosition, channelPosition, writeVal);
-		build_event_object(mosq, controller, modulePosition, channelPosition, channelValue);
+		break;
+	case aom:
+		kbus_write_analog(modulePosition, channelPosition, channelValue);
+		break;
+	default:
+		break;
 	}
 }

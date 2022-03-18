@@ -41,6 +41,8 @@
 #include "get_config.h"
 #include "mqtt.h"
 #include "led.h"
+#include "utils.h"
+#include "logger.h"
 
 #define IS_RUNNING	0x01
 #define IS_STOPPED	0x02
@@ -48,42 +50,81 @@
 
 struct node controller;
 
-static int run = 1;
+int run = 0;
+int iCounts = 0;
 int switch_state = 0;
 int initialized = 0;
 int kbusIsInit = 1;
 
-int iCounts = 0;
-
-void selector_switch()
-{
-	switch_state = get_switch_state();
-}
-
 int main(int argc, char *argv[])
-{
+{	
 	uint8_t reconnect = true;
 	struct mosquitto *mosq;
 	int rc = 0;
 	
+	int led = 0;
+	
 	int kbus_resp = 0;
+	
+	unsigned long tik, tok;
 
-	// get the config
+
+	// get the config	
 	this_config = get_program_config();
+	
+	uint32_t sleepVal = (this_config.publish_cycle - 30) * 1000;
 
 	controller.nodeId = this_config.node_id;
 	
 	set_led(IS_STOPPED);
+	
+	log_execution("program started", 0);
+	
+	mosquitto_lib_init();
+
+	mosq = mosquitto_new(controller.nodeId, true, 0);
+
+	// if tls enabled add tls object to mosq
+	if (this_config.support_tls)
+	{
+		mosquitto_tls_set(mosq, this_config.rootca_path, NULL, this_config.cert_path, this_config.key_path, NULL);
+	}
+	// if tls enabled add tls object to mosq
+	if (this_config.support_userpasswd)
+	{
+		mosquitto_username_pw_set(mosq, this_config.mqtt_username, this_config.mqtt_password);
+	}
+
+	if (mosq)
+	{
+		mosquitto_connect_callback_set(mosq, connect_callback);
+		mosquitto_message_callback_set(mosq, message_callback);
+		mosquitto_disconnect_callback_set(mosq, disconnect_callback);
+
+		rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
+
+		if (kbusIsInit)
+		{
+			// scan the kbus
+			kbus_init(&kbus);
+			kbusIsInit = 0;						
+		}
+
+		// map everything to the controller object as part of the init process
+		if (build_module_object(kbus.terminalCount, kbus.terminalDescription, kbus.terminals, &controller.modules))
+		{
+			controller.number_of_modules = kbus.terminalCount;
+		}
+	}
 
 	while (1)
-	{
-		// get the run stop reset switch value
-		selector_switch();
-		
-		controller.switch_state = map_switch_state(switch_state);
+	{	
+
+		controller.ss = get_switch_state();
+		controller.switch_state = map_switch_state(controller.ss);
 
 		// run based on selector switch
-		switch (switch_state)
+		switch (controller.ss)
 		{
 			// stopped
 		case 0:
@@ -92,113 +133,99 @@ int main(int argc, char *argv[])
 				// send one last object to notify the system that it is stopped
 				build_controller_object(mosq);
 				
-				// set the led to stop
-				set_led(IS_STOPPED);
+				if (led)
+				{
+					set_led(IS_STOPPED);
+					led = 0;
+				}
 
-				printf("program stopped\n");
-				// disconnect from the broker 
-				mosquitto_disconnect(mosq);
-
-				// reset the mqtt objects
-				mosquitto_destroy(mosq);
-
-				// decrement the lib ref
-				mosquitto_lib_cleanup();
-
-				// reset the init
+				log_execution("switch event: STOP", 0);
 				initialized = 0;
+				iCounts = 0;
 			}
 			break;
 
 			// run
 		case 1:
 
-			if (initialized == 1)
+			while(initialized)
 			{
+				controller.ss = get_switch_state();
 				
-				rc = mosquitto_loop(mosq, -1, 1);
-				if (run && rc)
+				if (controller.ss != 1)
 				{
-					set_led(IS_ERROR);
-					initialized = 0;
-					printf("connection error!\n");
-					sleep(3);
-					mosquitto_reconnect(mosq);
+					break;
 				}
 				
-				if (iCounts >= 20)
+				rc = mosquitto_loop(mosq, -1, 1);
+				if (rc)
 				{
-					build_controller_object(mosq);
-					iCounts = 0;
+					if (led)
+					{
+						set_led(IS_ERROR);
+						led = 0;
+					}
+					
+					sleep(3);
+					mosquitto_reconnect(mosq);
+					tik = current_timestamp();
 				}
 				else
 				{
-					iCounts++;
-				}
+					if (!led)
+					{
+						set_led(IS_RUNNING);
+						led = 1;
+					}
+					
+					tok = current_timestamp();
+					
+					// the main event
+					if ((this_config.publish_cyclic) & (run) & (tok > (tik + this_config.publish_cycle)))
+					{
+						build_controller_object(mosq);
+						tik = current_timestamp();
+					}
+					else // give the connection some time to stabilize
+					{
+						if (iCounts >= 50)
+						{
+							run = 1;
+						}
+						else
+						{
+							iCounts++;
+						}
+					}
+					
+					// do the kbus work
+					kbus_resp = kbus_read(&mosq, &this_config, &kbus); //, controller);
 				
-				// do the kbus work
-				kbus_resp = kbus_read(&mosq, &this_config, &kbus);//, controller);
-				
-				// send some error stuff if needed
-				if (kbus_resp != 0) 
-				{
-					char *kbus_error_string = build_error_object(true, controller, this_config, "kbus error present");
-					mosquitto_publish(mosq, NULL, this_config.status_pub_topic, strlen(kbus_error_string), kbus_error_string, 0, 0);
+					printf("%i\n", dxMod[controller.modules[2].typeIndex].outData[0]);
+					
+					usleep(10000);
 				}
 			}
-			else
-			{
+			//else
+			//{
 				set_led(IS_STOPPED);
 				
-				mosquitto_lib_init();
-
-				mosq = mosquitto_new(controller.nodeId, true, 0);
-
-				// if tls enabled add tls object to mosq
-				if (this_config.support_tls)
-				{
-					mosquitto_tls_set(mosq, this_config.rootca_path, NULL, this_config.cert_path, this_config.key_path, NULL);
-				}
-				// if tls enabled add tls object to mosq
-				if (this_config.support_userpasswd)
-				{
-					mosquitto_username_pw_set(mosq, this_config.mqtt_username, this_config.mqtt_password);
-				}
-
-				if (mosq)
-				{
-					mosquitto_connect_callback_set(mosq, connect_callback);
-					mosquitto_message_callback_set(mosq, message_callback);
-
-					rc = mosquitto_connect(mosq, this_config.mqtt_endpoint, this_config.mqtt_port, 0);
-
-					mosquitto_subscribe(mosq, NULL, this_config.event_sub_topic, 0);
-
-					if (kbusIsInit)
-					{
-						// scan the kbus
-						kbus_init(&kbus);
-						kbusIsInit = 0;						
-					}
-
-					// map everything to the controller object as part of the init process
-					if (build_module_object(kbus.terminalCount, kbus.terminalDescription, kbus.terminals, &controller.modules))
-					{
-						controller.number_of_modules = kbus.terminalCount;
-					}
-				}
 				build_controller_object(mosq);
 				initialized = 1;
-				set_led(IS_RUNNING);
+			tik = current_timestamp();
 
-			}
+			//}
 			break;
 			// reset
 		case 3:
-			printf("reset tripped\n");
+			log_execution("switch event: RESET", 0);
 			
-			//setRunLEDColor(RUN_COLOR_BLINK);
-
+			if (led)
+			{
+				set_led(IS_STOPPED);
+				led = 0;
+			}
+			
 			// put some cool reset logic here
 			
 			initialized = 0;

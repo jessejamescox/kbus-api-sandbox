@@ -26,7 +26,8 @@
 
 //struct progConfig thisConfig;
 
-struct prog_config get_program_config() {
+struct prog_config get_program_config() 
+{
 	config_t cfg, *cf;
 	const config_setting_t *retries;
 	//const char *hostname = NULL;
@@ -36,7 +37,8 @@ struct prog_config get_program_config() {
 	cf = &cfg;
 	config_init(cf);
 	
-	if (!config_read_file(cf, CONFIG_FILE)) {
+	if (!config_read_file(cf, CONFIG_FILE)) 
+	{
 		fprintf(stderr,
 			"%s:%d - %s\n",
 			config_error_file(cf),
@@ -47,7 +49,8 @@ struct prog_config get_program_config() {
 	}
 	
 	// get the identification
-	if (!config_lookup_string(cf, "node_id", &config_hold.node_id)) {
+	if (!config_lookup_string(cf, "node_id", &config_hold.node_id)) 
+	{
 		printf("could not find the node id config param \n");
 		char hn[32];
 		gethostname(hn, 32);
@@ -55,27 +58,32 @@ struct prog_config get_program_config() {
 	}
 	
 	// get the cyclic setting
-	if (!config_lookup_bool(cf, "publish_cyclic", &config_hold.publish_cyclic)) {
+	if (!config_lookup_bool(cf, "publish_cyclic", &config_hold.publish_cyclic)) 
+	{
 		printf("could not find the publish cyclic enable param\n");
 	}
 	
 	// get the interval setting
-	if (!config_lookup_int(cf, "publish_interval", &config_hold.publish_cycle)) {
+	if (!config_lookup_int(cf, "publish_interval", &config_hold.publish_cycle)) 
+	{
 		printf("could not find the publish interval param\n");
 	}
 	
 	// get the mqtt endpoint
-	if (!config_lookup_string(cf, "mqtt_endpoint", &config_hold.mqtt_endpoint)) {
+	if (!config_lookup_string(cf, "mqtt_endpoint", &config_hold.mqtt_endpoint)) 
+	{
 		printf("could not find the endpoint config param\n");
 	}
 	
 	// get the mqtt port
-	if (!config_lookup_int(cf, "mqtt_port", &config_hold.mqtt_port)) {
+	if (!config_lookup_int(cf, "mqtt_port", &config_hold.mqtt_port)) 
+	{
 		printf("could not find the mqtt port config param\n");
 	}
 	
 	// get username and password
-	if (!config_lookup_bool(cf, "support_userpasswd", &config_hold.support_userpasswd)) {
+	if (!config_lookup_bool(cf, "support_userpasswd", &config_hold.support_userpasswd)) 
+	{
 		printf("could not find the user password enable param\n");
 	}
 	
@@ -94,7 +102,8 @@ struct prog_config get_program_config() {
 	}
 	
 	// get the tls string
-	if (!config_lookup_bool(cf, "support_tls", &config_hold.support_tls)) {
+	if (!config_lookup_bool(cf, "support_tls", &config_hold.support_tls)) 
+	{
 		printf("could not find the tls enable param\n");
 	}
 	
@@ -122,9 +131,8 @@ struct prog_config get_program_config() {
 		}
 	}
 	
-	if (config_hold.support_aws_shadow) {
-		// get the sub topic
-		//asprintf(&config_hold.event_sub_topic, "$aws/things/%s/shadow/update", config_hold.node_id);
+	if (config_hold.support_aws_shadow) 
+	{
 		
 		// get the sub topic
 		asprintf(&config_hold.event_sub_topic, "$aws/things/%s/shadow/update", config_hold.node_id);
@@ -134,9 +142,11 @@ struct prog_config get_program_config() {
 	
 		// get the status topic
 		asprintf(&config_hold.status_pub_topic, "$aws/things/%s/shadow/update", config_hold.node_id);
+		
 	}
 	
-	else {
+	else 
+	{
 		// get the sub topic
 		if (!config_lookup_string(cf, "event_sub_topic", &config_hold.event_sub_topic)) {
 			printf("could not find the tls enable param\n");
