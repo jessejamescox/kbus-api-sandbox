@@ -18,7 +18,7 @@
 
 #define MAX_CALLBACKS 32
 
-#define LOGFILE "/etc/kbus-daemon/logs/runtime.log"
+#define LOGFILE "/etc/kbus-api/logs/runtime.log"
 
 enum loglvl
 {

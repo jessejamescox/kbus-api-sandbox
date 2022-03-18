@@ -72,7 +72,7 @@ struct json_object *analog_in_channel_object(int mp, int cp)
 	struct json_object *jobj = json_object_new_object();
 	json_object_object_add(jobj, "value", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].value));
 	json_object_object_add(jobj, "label", json_object_new_string(aiMod[controller.modules[mp].typeIndex].inData[cp].label));
-	json_object_object_add(jobj, "deadband", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].deadband));
+	//json_object_object_add(jobj, "deadband", json_object_new_int(aiMod[controller.modules[mp].typeIndex].inData[cp].deadband));
 	return jobj;
 };
 
@@ -269,7 +269,7 @@ struct json_object *simple_channels_object(int mp)
 
 	switch (controller.modules[mp].mtype)
 	{
-	case dim: // digital inputs
+	case dim:
 		json_object_object_add(jobj, "inputs", din_data_breakout_object(mp));
 		break;
 
@@ -278,7 +278,6 @@ struct json_object *simple_channels_object(int mp)
 		break;
 
 	case dxm:
-		//json_object_object_add(jobj, "inputs", dxi_data_breakout_object(mp));
 		json_object_object_add(jobj, "outputs", dxo_data_breakout_object(mp));
 		json_object_object_add(jobj, "inputs", dxi_data_breakout_object(mp));
 		break;

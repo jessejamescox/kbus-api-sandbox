@@ -200,8 +200,6 @@ int main(int argc, char *argv[])
 					
 					// do the kbus work
 					kbus_resp = kbus_read(&mosq, &this_config, &kbus); //, controller);
-				
-					printf("%i\n", dxMod[controller.modules[2].typeIndex].outData[0]);
 					
 					usleep(10000);
 				}
