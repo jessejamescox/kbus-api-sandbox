@@ -21,7 +21,7 @@
 #include <libconfig.h>
 #include "get_config.h"
 
-#define CONFIG_FILE "/etc/kbus-daemon/kbus-daemon.cfg"
+#define CONFIG_FILE "/etc/kbus-api/kbus-api.cfg"
 #define HOST_NAME_MAX 100
 
 //struct progConfig thisConfig;
