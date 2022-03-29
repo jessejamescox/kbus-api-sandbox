@@ -24,7 +24,7 @@ void set_led(int led_state) {
 		system("echo 0 > /sys/class/leds/pca955x\:run-red/brightness");
 		break;
 	case 2:
-		system("echo 255 > /sys/class/leds/run-green/brightness");
+		system("echo 255 > /sys/class/leds/pca955x\:run-green/brightness");
 		system("echo 255 > /sys/class/leds/pca955x\:run-red/brightness");
 		break;
 	case 128:

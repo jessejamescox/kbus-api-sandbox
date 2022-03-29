@@ -124,11 +124,11 @@ struct prog_config get_program_config()
 		{
 			printf("could not find the tls root ca path\n");
 		}
-		
-		if (!config_lookup_bool(cf, "support_aws_shadow", &config_hold.support_aws_shadow))
-		{
-			printf("could not find the aws shadow setting\n");	
-		}
+	}
+	
+	if (!config_lookup_bool(cf, "support_aws_shadow", &config_hold.support_aws_shadow))
+	{
+		printf("could not find the aws shadow setting\n");	
 	}
 	
 	if (config_hold.support_aws_shadow) 
@@ -161,11 +161,6 @@ struct prog_config get_program_config()
 		if (!config_lookup_string(cf, "status_pub_topic", &config_hold.status_pub_topic)) {
 			printf("could not find the tls enable param\n");
 		} asprintf(&config_hold.status_pub_topic, "%s%s", config_hold.node_id, config_hold.status_pub_topic);
-	}
-	
-	if (!config_lookup_int(cf, "analog_deadband", &config_hold.analog_deadband))
-	{
-		printf("could not find the aws shadow setting\n");	
 	}
 	
 	return (config_hold);
