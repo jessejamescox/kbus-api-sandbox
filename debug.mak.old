@@ -5,8 +5,8 @@
 BINARYDIR := Debug
 
 #Toolchain
-CC := /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-gcc
-CXX := /home/wago/wago/ptxproj/selected_toolchain/arm-linux-gnueabihf-g++
+CC := gcc
+CXX := g++
 LD := $(CXX)
 AR := ar
 OBJCOPY := objcopy

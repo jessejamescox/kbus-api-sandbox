@@ -365,6 +365,7 @@ struct json_object *main_controller_object()
 
 void build_controller_object(struct mosquitto *mosq)
 {
+
 	struct json_object *jsState = json_object_new_object();
 	struct json_object *jsReported = json_object_new_object();
 	json_object_object_add(jsReported, "reported", main_controller_object());
@@ -376,7 +377,8 @@ void build_controller_object(struct mosquitto *mosq)
 
 	// while (json_object_put(jsController)) {};
 	while(json_object_put(jsReported)){};
-	while(json_object_put(jsState)){} ;
+	while(json_object_put(jsState)){};
+
 }
 
 void parse_input_channel_data(struct mosquitto *mosq, struct json_object *jObj, int iModules)
@@ -494,8 +496,8 @@ void parse_output_channel_data(struct mosquitto *mosq, struct json_object *jObj,
 			{
 				if (json_object_object_get_ex(jH, "label", &jLbl)) 
 				{
-					//char *label = json_object_get_string(jLbl);
-					//memcpy(dxMod[controller.modules[iModules].typeIndex].outData[iChannels].label, label, strlen(label) + 1);
+					char *label = json_object_get_string(jLbl);
+					memcpy(dxMod[controller.modules[iModules].typeIndex].outData[iChannels].label, label, strlen(label) + 1);
 				}
 				
 				if (json_object_object_get_ex(jH, "value", &jVal)) 
