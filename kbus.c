@@ -336,7 +336,6 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 		pmMod[iTi].L3.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
 			
 		controlBytes[1] = 0; // query L3
-		//controlBytes[3] = 10; // get AC vals
 		controlBytes[4] = 4;
 		controlBytes[5] = 1;
 		controlBytes[6] = 7;
@@ -345,7 +344,6 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 	else
 	{
 		controlBytes[1] = 0; // query L3
-		//controlBytes[3] = 10; // get AC vals
 		controlBytes[4] = 4;
 		controlBytes[5] = 1;
 		controlBytes[6] = 7;
