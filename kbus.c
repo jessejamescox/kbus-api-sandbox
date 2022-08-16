@@ -283,11 +283,11 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 		pmMod[iTi].L1.errorFieldCCW			= CHK_BIT(statusBytes[2], 6);
 		pmMod[iTi].L1.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
 			
-		controlBytes[1] = 1; // query L2
-		controlBytes[4] = 5;
-		controlBytes[5] = 2;
-		controlBytes[6] = 8;
-		controlBytes[7] = 17;
+		controlBytes[1] = 1;	// query L2
+		controlBytes[4] = 5;	// met_id 1
+		controlBytes[5] = 2;	// met_id 2
+		controlBytes[6] = 8;	// met_id 3
+		controlBytes[7] = 17;	// met_id 4
 	}
 	
 	// getting the L2 data
@@ -336,7 +336,7 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 		pmMod[iTi].L3.errorUnderVolts		= CHK_BIT(statusBytes[2], 7);
 			
 		controlBytes[1] = 0; // query L3
-		controlBytes[3] = 10; // get AC vals
+		//controlBytes[3] = 10; // get AC vals
 		controlBytes[4] = 4;
 		controlBytes[5] = 1;
 		controlBytes[6] = 7;
@@ -345,7 +345,7 @@ void kbus_read_pmm(int *i_modules, struct kbus *kbus, struct pmMod *pmm)
 	else
 	{
 		controlBytes[1] = 0; // query L3
-		controlBytes[3] = 10; // get AC vals
+		//controlBytes[3] = 10; // get AC vals
 		controlBytes[4] = 4;
 		controlBytes[5] = 1;
 		controlBytes[6] = 7;
